@@ -4,6 +4,7 @@ import "utils.dart" as utils;
 import "mouse.dart" as mouse;
 import "texture.dart";
 import "applicant.dart";
+import "atlas.dart";
 
 CanvasElement canvas = querySelector("canvas#canvas");
 CanvasRenderingContext2D context = canvas.context2D;
@@ -18,7 +19,7 @@ enum GameState {
 	MENU, MAP, INTERVIEW
 }
 
-GameState gameState = GameState.INTERVIEW;
+GameState gameState = GameState.MAP;
 
 Map keys = new Map<num, bool>();
 Map keycodes = {
@@ -35,6 +36,8 @@ num lastDelta = 0;
 Rectangle playButton = new Rectangle(WIDTH / 2 - (150), 400, 300, 50);
 
 Applicant applicant = new Applicant();
+
+Atlas atlas = new Atlas(WIDTH, HEIGHT);
 
 update(num d) {
 	num delta = d - lastDelta;
@@ -78,7 +81,7 @@ draw() {
 
 		utils.drawText(context, "PLAY", WIDTH / 2, 418, "Propaganda", 25, "#fff", true);
 	} else if (gameState == GameState.MAP) {
-
+		atlas.render(context);
 	} else if (gameState == GameState.INTERVIEW) {
 		utils.drawRect(context, 0, 0, WIDTH, HEIGHT, "#4D4D4D");
 
@@ -135,6 +138,29 @@ init() {
 
 	canvas.onMouseDown.listen((e) {
 		mouse.down = true;
+
+		num downX = e.offset.x;
+		num downY = e.offset.y;
+
+		if (e.which == 1) {
+//			print(atlas.getCountry(downX, downY));
+		}
+
+		StreamSubscription mouseMoveStream = canvas.onMouseMove.listen((e) {
+			num moveX = e.offset.x;
+			num moveY = e.offset.y;
+
+			if (e.which == 2) {
+				atlas.offset += new Point(downX - moveX, downY - moveY);
+
+				downX = e.offset.x;
+				downY = e.offset.y;
+			}
+		});
+
+		window.onMouseUp.listen((e) {
+			mouseMoveStream.cancel();
+		});
 	});
 
 	window.onMouseUp.listen((e) {

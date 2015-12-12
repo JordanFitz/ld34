@@ -33,6 +33,7 @@ class Applicant {
 
 		utils.drawRect(context, renderX, renderY, 200, y - renderY, "rgba(0, 0, 0, 0.2)");
 
+		// Placeholder "graphics"
 		if (visualFeatures.hatType != 0) {
 		 	num hatColor = (255 / visualFeatures.hatType).round();
 			utils.drawRect(context, renderX - 20, renderY - 90, 240, 120, "rgb($hatColor, ${hatColor * 2}, $hatColor)");
