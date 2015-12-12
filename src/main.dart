@@ -1,4 +1,5 @@
 import "dart:html";
+import "dart:async";
 
 import "utils.dart" as utils;
 import "mouse.dart" as mouse;
@@ -82,6 +83,17 @@ draw() {
 		utils.drawText(context, "PLAY", WIDTH / 2, 418, "Propaganda", 25, "#fff", true);
 	} else if (gameState == GameState.MAP) {
 		atlas.render(context);
+
+		String country = Atlas.countryNames[atlas.getCountry(mouse.x, mouse.y)];
+
+		if (country != null) {
+			if(mouse.down && mouse.button == 1) {
+				atlas.baseCountry = country;
+			}
+
+			utils.drawText(context, country, mouse.x + 1, mouse.y - 39, "Propaganda", 20, "rgba(255, 255, 255, 0.6)", true);
+			utils.drawText(context, country, mouse.x, mouse.y - 40, "Propaganda", 20, "#000", true);
+		}
 	} else if (gameState == GameState.INTERVIEW) {
 		utils.drawRect(context, 0, 0, WIDTH, HEIGHT, "#4D4D4D");
 
@@ -138,13 +150,10 @@ init() {
 
 	canvas.onMouseDown.listen((e) {
 		mouse.down = true;
+		mouse.button = e.which;
 
 		num downX = e.offset.x;
 		num downY = e.offset.y;
-
-		if (e.which == 1) {
-//			print(atlas.getCountry(downX, downY));
-		}
 
 		StreamSubscription mouseMoveStream = canvas.onMouseMove.listen((e) {
 			num moveX = e.offset.x;
