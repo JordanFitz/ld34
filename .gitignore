@@ -1,5 +1,7 @@
 .idea/
 
+*.txt
+
 images/
 fonts/
 audio/
