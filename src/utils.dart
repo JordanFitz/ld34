@@ -1,4 +1,5 @@
 import "dart:html";
+import "dart:math";
 
 drawText(CanvasRenderingContext2D context, String text, num x, num y, String font, num size, String color, bool centered) {
 	String oldFillStyle = context.fillStyle;
@@ -42,4 +43,17 @@ within(num x1, num y1, num x2, num y2, num width, num height) {
 
 withinBox(num x, num y, Rectangle box) {
 	return (x > box.left && x <= box.left + box.width && y > box.top && y <= box.top + box.height);
+}
+
+num chance(num d, num variations) {
+	if (d < 0.1) d = 0.1;
+
+	num percentage = 1 / variations;
+	num result = variations;
+
+	for(num i = 0; i < variations; i++) {
+		if (d >= result * percentage) return 1 + new Random().nextInt(i);
+
+		result--;
+	}
 }

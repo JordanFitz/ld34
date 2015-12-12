@@ -3,6 +3,7 @@ import "dart:html";
 import "utils.dart" as utils;
 import "mouse.dart" as mouse;
 import "texture.dart";
+import "applicant.dart";
 
 CanvasElement canvas = querySelector("canvas#canvas");
 CanvasRenderingContext2D context = canvas.context2D;
@@ -17,7 +18,7 @@ enum GameState {
 	MENU, MAP, INTERVIEW
 }
 
-GameState gameState = GameState.MENU;
+GameState gameState = GameState.INTERVIEW;
 
 Map keys = new Map<num, bool>();
 Map keycodes = {
@@ -32,6 +33,8 @@ Map textureLocations = new Map<String, Rectangle>();
 num lastDelta = 0;
 
 Rectangle playButton = new Rectangle(WIDTH / 2 - (150), 400, 300, 50);
+
+Applicant applicant = new Applicant();
 
 update(num d) {
 	num delta = d - lastDelta;
@@ -78,6 +81,9 @@ draw() {
 
 	} else if (gameState == GameState.INTERVIEW) {
 		utils.drawRect(context, 0, 0, WIDTH, HEIGHT, "#4D4D4D");
+
+		applicant.render(context, 650, HEIGHT - 150);
+
 		utils.drawRect(context, 0, 0, WIDTH, 35, "#C4C4C4");
 		utils.drawRect(context, 0, 0, 35, HEIGHT, "#C4C4C4");
 		utils.drawRect(context, WIDTH - 35, 0, 35, HEIGHT, "#C4C4C4");
@@ -142,6 +148,8 @@ init() {
 
 	textureRects["denyButton"] = new Rectangle(249, 0, 249, 230);
 	textureLocations["denyButton"] = new Rectangle(WIDTH - 425 - 83, HEIGHT - 112.5, 83, 77);
+
+	applicant.randomize();
 
 	window.animationFrame.then(tick);
 }
