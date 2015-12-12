@@ -2,7 +2,7 @@ import "dart:html";
 
 import "utils.dart" as utils;
 import "mouse.dart" as mouse;
-import "box.dart";
+import "texture.dart";
 
 CanvasElement canvas = querySelector("canvas#canvas");
 CanvasRenderingContext2D context = canvas.context2D;
@@ -24,9 +24,14 @@ Map keycodes = {
 
 };
 
+Map textures = new Map<String, Texture>();
+Map textureRects = new Map<String, Rectangle>();
+Map textureSizes = new Map<String, Point>();
+Map textureLocations = new Map<String, Rectangle>();
+
 num lastDelta = 0;
 
-Box playButton = new Box(WIDTH / 2 - (150), 400, 300, 50);
+Rectangle playButton = new Rectangle(WIDTH / 2 - (150), 400, 300, 50);
 
 update(num d) {
 	num delta = d - lastDelta;
@@ -45,16 +50,20 @@ update(num d) {
 		}
 	}
 
+	if (gameState == GameState.MENU && utils.withinBox(mouse.x, mouse.y, playButton) && mouse.down) {
+		gameState = GameState.MAP;
+	}
+
 	lastDelta = d;
 }
 
 draw() {
 	context.clearRect(0, 0, WIDTH, HEIGHT);
 
-	context.fillStyle = "rgba(0, 0, 0, $backgroundOpacity)";
-	context.fillRect(0, 0, WIDTH, HEIGHT);
-
 	if (gameState == GameState.MENU) {
+		context.fillStyle = "rgba(0, 0, 0, $backgroundOpacity)";
+		context.fillRect(0, 0, WIDTH, HEIGHT);
+
 		utils.drawText(context, "TwoButtons,", WIDTH / 2, 250, "Propaganda", 60, "#000", true);
 		utils.drawText(context, "Controls", WIDTH / 2, 300, "Propaganda", 60, "#000", true);
 
@@ -65,6 +74,32 @@ draw() {
 		}
 
 		utils.drawText(context, "PLAY", WIDTH / 2, 418, "Propaganda", 25, "#fff", true);
+	} else if (gameState == GameState.MAP) {
+
+	} else if (gameState == GameState.INTERVIEW) {
+		utils.drawRect(context, 0, 0, WIDTH, HEIGHT, "#4D4D4D");
+		utils.drawRect(context, 0, 0, WIDTH, 35, "#C4C4C4");
+		utils.drawRect(context, 0, 0, 35, HEIGHT, "#C4C4C4");
+		utils.drawRect(context, WIDTH - 35, 0, 35, HEIGHT, "#C4C4C4");
+		utils.drawRect(context, 0, HEIGHT - 150, WIDTH, 150, "#C4C4C4");
+
+		context.globalAlpha = 0.9;
+
+		if (utils.withinBox(mouse.x, mouse.y, textureLocations["acceptButton"])) {
+			context.globalAlpha = 1;
+		}
+
+		context.drawImageToRect(textures["spritesheet"].image, textureLocations["acceptButton"], sourceRect: textureRects["acceptButton"]);
+
+		context.globalAlpha = 0.9;
+
+		if (utils.withinBox(mouse.x, mouse.y, textureLocations["denyButton"])) {
+			context.globalAlpha = 1;
+		}
+
+		context.drawImageToRect(textures["spritesheet"].image, textureLocations["denyButton"], sourceRect: textureRects["denyButton"]);
+
+		context.globalAlpha = 1;
 	}
 }
 
@@ -96,9 +131,17 @@ init() {
 		mouse.down = true;
 	});
 
-	canvas.onMouseUp.listen((e) {
+	window.onMouseUp.listen((e) {
 		mouse.down = false;
 	});
+
+	textures["spritesheet"] = new Texture("images/spritesheet.png");
+
+	textureRects["acceptButton"] = new Rectangle(0, 0, 249, 230);
+	textureLocations["acceptButton"] = new Rectangle(425, HEIGHT - 115, 83, 77);
+
+	textureRects["denyButton"] = new Rectangle(249, 0, 249, 230);
+	textureLocations["denyButton"] = new Rectangle(WIDTH - 425 - 83, HEIGHT - 112.5, 83, 77);
 
 	window.animationFrame.then(tick);
 }
