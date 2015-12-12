@@ -24,7 +24,10 @@ GameState gameState = GameState.MAP;
 
 Map keys = new Map<num, bool>();
 Map keycodes = {
-
+	"w": 87,
+	"a": 65,
+	"s": 83,
+	"d": 68
 };
 
 Map textures = new Map<String, Texture>();
@@ -59,6 +62,24 @@ update(num d) {
 
 	if (gameState == GameState.MENU && utils.withinBox(mouse.x, mouse.y, playButton) && mouse.down) {
 		gameState = GameState.MAP;
+	}
+
+	if(gameState == GameState.MAP) {
+		if(keys.containsKey(keycodes["w"])) {
+			atlas.offset += new Point(0, -0.5 * delta);
+		}
+
+		if(keys.containsKey(keycodes["s"])) {
+			atlas.offset += new Point(0, 0.5 * delta);
+		}
+
+		if(keys.containsKey(keycodes["a"])) {
+			atlas.offset += new Point(-0.5 * delta, 0);
+		}
+
+		if(keys.containsKey(keycodes["d"])) {
+			atlas.offset += new Point(0.5 * delta, 0);
+		}
 	}
 
 	lastDelta = d;
@@ -160,8 +181,6 @@ init() {
 			num moveY = e.offset.y;
 
 			if (e.which == 2) {
-				atlas.offset += new Point(downX - moveX, downY - moveY);
-
 				downX = e.offset.x;
 				downY = e.offset.y;
 			}

@@ -10,9 +10,9 @@ class Atlas {
 		"191,211,160": "FINLAND",
 		"179,177,216": "SWEDEN",
 		"235,207,204": "DENMARK",
-		"255,251,167": "RUSSIA",
+		//"255,251,167": "RUSSIA",
 		"246,152,153": "UNITED_KINGDOM",
-		"168,207,88": "IRELAND",
+		"159,186,84": "IRELAND",
 		"254,205,103": "FRANCE",
 		"105,189,68": "BELGIUM",
 		"251,244,156": "NETHERLANDS",
@@ -25,13 +25,13 @@ class Atlas {
 		"203,154,157": "SPAIN",
 		"253,255,172": "PORTUGAL",
 		"254,204,153": "CZECH_REP.",
-		"159,186,84": "AUSTRIA",
+		"168,207,88": "AUSTRIA",
 		"246,235,21": "SWITZERLAND",
 		"206,193,223": "UKRAINE",
 		"135,209,212": "SLOVAKIA",
 		"253,255,171": "HUNGARY",
 		"226,226,252": "ITALY",
-		"231,191,251": "SLOVENIA",
+		"232,191,251": "SLOVENIA",
 		"240,239,157": "CROATIA",
 		"203,159,75": "BOSNIA",
 		"195,226,221": "SERBIA",
@@ -91,7 +91,7 @@ class Atlas {
 		"MOLDOVA": "Moldova"
 	};
 
-	Point offset = new Point(0, 0);
+	Point offset = new Point(85, 0);
 
 	Texture visibleMap = new Texture("images/map_friendly.png");
 	Texture coloredMap = new Texture("images/map_colors.png");
@@ -123,11 +123,11 @@ class Atlas {
 	}
 
 	render(CanvasRenderingContext2D context) {
-		if (offset.x < 0) offset = new Point(0, offset.y);
+		if (offset.x < 85) offset = new Point(85, offset.y);
 		if (offset.y < 0) offset = new Point(offset.x, 0);
 
-		if (offset.x > visibleMap.image.width - width) offset = new Point(visibleMap.image.width - width, offset.y);
-		if (offset.y > visibleMap.image.height - height) offset = new Point(offset.x, visibleMap.image.height - height);
+		if (offset.x > visibleMap.image.width - width - 32) offset = new Point(visibleMap.image.width - width - 32, offset.y);
+		if (offset.y > visibleMap.image.height - height - 75) offset = new Point(offset.x, visibleMap.image.height - height - 75);
 
 		Rectangle destination = new Rectangle(0, 0, width, height);
 		Rectangle source = new Rectangle(offset.x, offset.y, width, height);
@@ -141,8 +141,8 @@ class Atlas {
 			utils.drawText(context, "Select a base country", 21, 21, "Propaganda", 30, "rgba(255, 255, 255, 0.6)", false);
 			utils.drawText(context, "Select a base country", 20, 20, "Propaganda", 30, "#000", false);
 
-			utils.drawText(context, "Use middle mouse button to pan", 21, 56, "Propaganda", 21, "rgba(255, 255, 255, 0.6)", false);
-			utils.drawText(context, "Use middle mouse button to pan", 20, 55, "Propaganda", 21, "#000", false);
+			utils.drawText(context, "Use WASD to pan", 21, 56, "Propaganda", 40, "rgba(255, 255, 255, 0.6)", false);
+			utils.drawText(context, "Use WASD to pan", 20, 55, "Propaganda", 40, "#000", false);
 		} else {
 			utils.drawText(context, baseCountry, 21, 21, "Propaganda", 30, "rgba(255, 255, 255, 0.6)", false);
 			utils.drawText(context, baseCountry, 20, 20, "Propaganda", 30, "#000", false);
