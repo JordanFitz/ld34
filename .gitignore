@@ -1,7 +1,9 @@
 .idea/
 
 *.txt
+*.bat
 
 images/
 fonts/
 audio/
+out/
