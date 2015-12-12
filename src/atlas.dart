@@ -109,8 +109,6 @@ class Atlas {
 		colorsCanvas.height = height;
 
 		colorsContext = colorsCanvas.context2D;
-
-		colorsContext.drawImage(coloredMap.image, 0 - offset.x, 0 - offset.y);
 	}
 
 	String getCountry(num x, num y) {
@@ -134,8 +132,10 @@ class Atlas {
 		Rectangle destination = new Rectangle(0, 0, width, height);
 		Rectangle source = new Rectangle(offset.x, offset.y, width, height);
 
-		context.drawImageToRect(visibleMap.image, destination, sourceRect: source);
+		colorsContext.clearRect(0, 0, width, height);
+
 		colorsContext.drawImageToRect(coloredMap.image, destination, sourceRect: source);
+		context.drawImageToRect(visibleMap.image, destination, sourceRect: source);
 
 		if (baseCountry == null) {
 			utils.drawText(context, "Select a base country", 21, 21, "Propaganda", 30, "rgba(255, 255, 255, 0.6)", false);
