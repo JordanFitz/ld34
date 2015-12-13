@@ -20,14 +20,15 @@ enum GameState {
 	MENU, MAP, INTERVIEW
 }
 
-GameState gameState = GameState.MAP;
+GameState gameState = GameState.INTERVIEW;
 
 Map keys = new Map<num, bool>();
 Map keycodes = {
 	"w": 87,
 	"a": 65,
 	"s": 83,
-	"d": 68
+	"d": 68,
+	"r": 82
 };
 
 Map textures = new Map<String, Texture>();
@@ -115,25 +116,29 @@ draw() {
 	} else if (gameState == GameState.INTERVIEW) {
 		utils.drawRect(context, 0, 0, WIDTH, HEIGHT, "#4D4D4D");
 
-		applicant.render(context, 650, HEIGHT - 150);
+		applicant.render(context, textures["spritesheet"], WIDTH, HEIGHT);
 
-		utils.drawRect(context, 0, 0, WIDTH, 35, "#C4C4C4");
-		utils.drawRect(context, 0, 0, 35, HEIGHT, "#C4C4C4");
-		utils.drawRect(context, WIDTH - 35, 0, 35, HEIGHT, "#C4C4C4");
-		utils.drawRect(context, 0, HEIGHT - 150, WIDTH, 150, "#C4C4C4");
+		utils.drawRect(context, 0, 0, WIDTH, 50, "#C4C4C4");
+		utils.drawRect(context, 0, 0, 75, HEIGHT, "#C4C4C4");
+		utils.drawRect(context, WIDTH - 75, 0, 75, HEIGHT, "#C4C4C4");
+		utils.drawRect(context, 0, HEIGHT - 200, WIDTH, 200, "#C4C4C4");
 
-		context.globalAlpha = 0.9;
+		context.drawImage(textures["applicantOverlay"].image, 0, 0);
+
+		context.globalAlpha = 0.93;
 
 		if (utils.withinBox(mouse.x, mouse.y, textureLocations["acceptButton"])) {
-			context.globalAlpha = 1;
+			context.globalAlpha = 0.9;
+			if (mouse.down) context.globalAlpha = 1;
 		}
 
 		context.drawImageToRect(textures["spritesheet"].image, textureLocations["acceptButton"], sourceRect: textureRects["acceptButton"]);
 
-		context.globalAlpha = 0.9;
+		context.globalAlpha = 0.93;
 
 		if (utils.withinBox(mouse.x, mouse.y, textureLocations["denyButton"])) {
-			context.globalAlpha = 1;
+			context.globalAlpha = 0.9;
+			if (mouse.down) context.globalAlpha = 1;
 		}
 
 		context.drawImageToRect(textures["spritesheet"].image, textureLocations["denyButton"], sourceRect: textureRects["denyButton"]);
@@ -158,6 +163,10 @@ init() {
 	});
 
 	window.onKeyUp.listen((e) {
+		if(keys.containsKey(keycodes["r"])) {
+			applicant.randomize();
+		}
+
 		keys.remove(e.keyCode);
 	});
 
@@ -199,14 +208,14 @@ init() {
 			}
 
 			window.onMouseUp.listen((e) {
-				if (mouseMoveStream != null && (atlas.avaiableCountries.contains(countryCode) || atlas.currentCountries.contains(countryCode))) {
+				if (mouseMoveStream != null && (atlas.availableCountries.contains(countryCode) || atlas.currentCountries.contains(countryCode))) {
 					mouseMoveStream.cancel();
 
 					atlas.tempTarget = null;
 
 					String target = atlas.getCountry(e.offset.x, e.offset.y);
 
-					if (target != null && target != atlas.baseCountry && atlas.avaiableCountries.contains(target)) {
+					if (target != null && target != atlas.baseCountry && atlas.availableCountries.contains(target)) {
 						atlas.target = new Point(e.offset.x + atlas.offset.x, e.offset.y + atlas.offset.y);
 						atlas.targetCountry = target;
 					}
@@ -220,12 +229,13 @@ init() {
 	});
 
 	textures["spritesheet"] = new Texture("images/spritesheet.png");
+	textures["applicantOverlay"] = new Texture("images/applicant_overlay.png");
 
 	textureRects["acceptButton"] = new Rectangle(0, 0, 249, 230);
-	textureLocations["acceptButton"] = new Rectangle(425, HEIGHT - 115, 83, 77);
+	textureLocations["acceptButton"] = new Rectangle(425, HEIGHT - 150, 124.5, 115);
 
 	textureRects["denyButton"] = new Rectangle(249, 0, 249, 230);
-	textureLocations["denyButton"] = new Rectangle(WIDTH - 425 - 83, HEIGHT - 112.5, 83, 77);
+	textureLocations["denyButton"] = new Rectangle(WIDTH - 425 - 124.5, HEIGHT - 150, 124.5, 115);
 
 	textureRects["arrowsCenter"] = new Rectangle(497, 0, 56, 52);
 	textureRects["arrows"] = new Rectangle(497, 52, 148, 138);

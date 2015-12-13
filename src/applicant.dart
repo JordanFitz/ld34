@@ -3,6 +3,7 @@ import "dart:html";
 
 import "featureset.dart";
 import "utils.dart" as utils;
+import "texture.dart";
 
 class Applicant {
 	// 1 = short, 2 = medium, 3 = tall
@@ -22,35 +23,51 @@ class Applicant {
 		requiredGold = (1 + random.nextInt(15) / (strength / 4)).round();
 		requiredFood = (1 + random.nextInt(15) / (strength / 4)).round();
 
-		height = 2 + (random.nextInt(3));
+		height = random.nextInt(3);
 
 		visualFeatures.randomize();
 	}
 
-	render(CanvasRenderingContext2D context, num x, num y) {
-		num renderY = y - height * 100;
-		num renderX = x;
+	render(CanvasRenderingContext2D context, Texture spritesheet, num width, num height) {
+		num bodyHeight = 0;
 
-		utils.drawRect(context, renderX, renderY, 200, y - renderY, "rgba(0, 0, 0, 0.2)");
+		switch (this.height) {
+			case 0:
+				bodyHeight = 448;
+
+				break;
+			case 1:
+				bodyHeight = 334;
+
+				break;
+			case 2:
+				bodyHeight = 218;
+
+				break;
+		}
+
+		Rectangle bodySource = new Rectangle(this.height * 226, 230, 226, bodyHeight);
+		Rectangle bodyDestination = new Rectangle(width / 2 - 113, height - 200 - bodyHeight, 226, bodyHeight);
+
+		context.drawImageToRect(spritesheet.image, bodyDestination, sourceRect: bodySource);
+
+		Rectangle eyeDestination = new Rectangle(width / 2 - 122, height - 200 - bodyHeight + 25, 243, 147);
+		context.drawImageToRect(spritesheet.image, eyeDestination, sourceRect: visualFeatures.eyeRect);
+
+		Rectangle hatDestination = new Rectangle(width / 2 - 150.5, height - 200 - bodyHeight - 128, 301, 241);
+		context.drawImageToRect(spritesheet.image, hatDestination, sourceRect: visualFeatures.hatRect);
 
 		// Placeholder "graphics"
 		if (visualFeatures.hatType != 0) {
-		 	num hatColor = (255 / visualFeatures.hatType).round();
-			utils.drawRect(context, renderX - 20, renderY - 90, 240, 120, "rgb($hatColor, ${hatColor * 2}, $hatColor)");
+
 		}
 
 		if (visualFeatures.beardType != 0) {
-			num beardColor = (255 / visualFeatures.beardType).round();
-			utils.drawRect(context, renderX + 40, renderY + 90, 120, 50, "rgb($beardColor, $beardColor, ${beardColor * 2})");
+
 		}
 
-		if (visualFeatures.shirtType != 0) {
-			num shirtColor = (255 / visualFeatures.shirtType).round();
-			utils.drawRect(context, renderX, renderY + 175, 200, y - renderY, "rgb(${shirtColor * 2}, $shirtColor, $shirtColor)");
-		}
+		if (visualFeatures.eyeType != 0) {
 
-		utils.drawText(context, "STRENGTH: $strength", 50, 50, "Propaganda", 25, "#fff", false);
-		utils.drawText(context, "FOOD: $requiredFood", 50, 80, "Propaganda", 25, "#fff", false);
-		utils.drawText(context, "GOLD: $requiredGold", 50, 110, "Propaganda", 25, "#fff", false);
+		}
 	}
 }

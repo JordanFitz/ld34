@@ -93,15 +93,21 @@ class Atlas {
 	};
 
 	Map borders = new Map<String, List<String>>();
+	Map overlays = new Map<String, Map<String, num>>();
 
-	List<String> avaiableCountries = new List<String>();
+	List<String> availableCountries = new List<String>();
 	List<String> currentCountries = new List<String>();
+
+	List<Map<String, num>> currentOverlays = new List<Map<String, num>>();
+	List<Map<String, num>> availableOverlays = new List<Map<String, num>>();
 
 	Point offset = new Point(85, 0);
 	Point downOffset = null;
 
 	Texture visibleMap = new Texture("images/map_friendly.png");
 	Texture coloredMap = new Texture("images/map_colors.png");
+	Texture outlineMap = new Texture("images/map_outline.png");
+	Texture countryOverlays = new Texture("images/overlays.png");
 
 	CanvasElement colorsCanvas = new CanvasElement();
 	CanvasRenderingContext2D colorsContext;
@@ -128,6 +134,10 @@ class Atlas {
 		HttpRequest.getString("borders.json").then((response) {
 			borders = JSON.decode(response);
 		});
+
+		HttpRequest.getString("overlays.json").then((response) {
+			overlays = JSON.decode(response);
+		});
 	}
 
 	String getCountry(num x, num y) {
@@ -142,11 +152,14 @@ class Atlas {
 	}
 
 	addCountry(String countryCode) {
-		if (avaiableCountries.contains(countryCode)) {
-			avaiableCountries.remove(countryCode);
+		if (availableCountries.contains(countryCode)) {
+			availableCountries.remove(countryCode);
 		}
 
-		if (!currentCountries.contains(countryCode)) currentCountries.add(countryCode);
+		if (!currentCountries.contains(countryCode)) {
+			currentCountries.add(countryCode);
+			currentOverlays.add(overlays[countryCode]);
+		}
 
 		print(countryCode);
 
@@ -154,7 +167,10 @@ class Atlas {
 
 		for (num i = 0; i < borderingCountries.length; i++) {
 			String country = borderingCountries[i];
-			if (!avaiableCountries.contains(country) && !currentCountries.contains(country)) avaiableCountries.add(country);
+			if (!availableCountries.contains(country) && !currentCountries.contains(country)) {
+				availableCountries.add(country);
+				availableOverlays.add(overlays[country]);
+			}
 		}
 	}
 
@@ -171,15 +187,36 @@ class Atlas {
 		colorsContext.clearRect(0, 0, width, height);
 
 		colorsContext.drawImageToRect(coloredMap.image, destination, sourceRect: source);
+
 		context.drawImageToRect(visibleMap.image, destination, sourceRect: source);
+
+		if(tempTarget != null) {
+			availableOverlays.forEach((overlay) {
+				Rectangle overlaySource = new Rectangle(overlay["sourceX"], overlay["sourceY"], overlay["width"], overlay["height"]);
+				Rectangle overlayDestination = new Rectangle(overlay["destX"] - offset.x, overlay["destY"] - offset.y, overlay["width"], overlay["height"]);
+
+				context.globalAlpha = 0.3;
+				context.drawImageToRect(countryOverlays.image, overlayDestination, sourceRect: overlaySource);
+				context.globalAlpha = 1;
+			});
+		}
+
+		currentOverlays.forEach((overlay) {
+			Rectangle overlaySource = new Rectangle(overlay["sourceX"], overlay["sourceY"], overlay["width"], overlay["height"]);
+			Rectangle overlayDestination = new Rectangle(overlay["destX"] - offset.x, overlay["destY"] - offset.y, overlay["width"], overlay["height"]);
+
+			context.drawImageToRect(countryOverlays.image, overlayDestination, sourceRect: overlaySource);
+		});
+
+		context.drawImage(outlineMap.image, -offset.x, -offset.y);
 
 		if (baseCountry == null) {
 			utils.drawText(context, "Select a base country", 21, 21, "Propaganda", 30, "rgba(255, 255, 255, 0.6)", false);
 			utils.drawText(context, "Select a base country", 20, 20, "Propaganda", 30, "#000", false);
 		} else if (from != null) {
-			context.strokeStyle = "#4e1c1c";
-			context.setLineDash([10, 10]);
-			context.lineWidth = 5;
+			context.setLineDash([14, 14]);
+			context.strokeStyle = "#fff";
+			context.lineWidth = 7;
 
 			context.beginPath();
 			context.moveTo(from.x - offset.x, from.y - offset.y);

@@ -1,236 +1,322 @@
 {
-	"UNITED_KINGDOM": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 301
-	},
-	"IRELAND": {
-		"x": 86,
-		"y": 0,
-		"width": 86,
-		"height": 123
-	},
-	"NORWAY": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"SWEDEN": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"FINLAND": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"DENMARK": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"GERMANY": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"NETHERLANDS": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"POLAND": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"CZECH_REP.": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"AUSTRIA": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"SWITZERLAND": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"BELGIUM": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"FRANCE": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"SLOVAKIA": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"LITHUANIA": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"BELARUS": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"UKRAINE": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"HUNGARY": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"ITALY": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"SLOVENIA": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"SPAIN": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"LATVIA": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"ROMANIA": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"MOLDOVA": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"CROATIA": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"SERBIA": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"PORTUGAL": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"ESTONIA": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"BULGARIA": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"BOSNIA": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"MONTENEGRO": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"KOSOVO": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"MACEDONIA": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"GREECE": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
 	"ALBANIA": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"TURKEY": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
-	},
-	"GEORGIA": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
+		"width": 33,
+		"height": 71,
+		"sourceX": 1051,
+		"sourceY": 679,
+		"destX": 761,
+		"destY": 1203
 	},
 	"ARMENIA": {
-		"x": 0,
-		"y": 0,
-		"width": 0,
-		"height": 0
+		"width": 59,
+		"height": 60,
+		"sourceX": 1350,
+		"sourceY": 790,
+		"destX": 1266,
+		"destY": 1239
+	},
+	"AUSTRIA": {
+		"width": 152,
+		"height": 74,
+		"sourceX": 383,
+		"sourceY": 1320,
+		"destX": 560,
+		"destY": 1011
+	},
+	"BELARUS": {
+		"width": 194,
+		"height": 163,
+		"sourceX": 0,
+		"sourceY": 1270,
+		"destX": 844,
+		"destY": 765
+	},
+	"BELGIUM": {
+		"width": 74,
+		"height": 61,
+		"sourceX": 1051,
+		"sourceY": 862,
+		"destX": 413,
+		"destY": 928
+	},
+	"BOSNIA": {
+		"width": 76,
+		"height": 69,
+		"sourceX": 1350,
+		"sourceY": 721,
+		"destX": 689,
+		"destY": 1125
+	},
+	"BULGARIA": {
+		"width": 125,
+		"height": 79,
+		"sourceX": 1308,
+		"sourceY": 929,
+		"destX": 825,
+		"destY": 1156
+	},
+	"CROATIA": {
+		"width": 110,
+		"height": 86,
+		"sourceX": 1308,
+		"sourceY": 1008,
+		"destX": 645,
+		"destY": 1089
+	},
+	"CZECH_REP.": {
+		"width": 133,
+		"height": 77,
+		"sourceX": 1175,
+		"sourceY": 945,
+		"destX": 615,
+		"destY": 943
+	},
+	"DENMARK": {
+		"width": 81,
+		"height": 106,
+		"sourceX": 1350,
+		"sourceY": 506,
+		"destX": 531,
+		"destY": 706
+	},
+	"ESTONIA": {
+		"width": 92,
+		"height": 80,
+		"sourceX": 1350,
+		"sourceY": 246,
+		"destX": 850,
+		"destY": 627
+	},
+	"FINLAND": {
+		"width": 222,
+		"height": 497,
+		"sourceX": 799,
+		"sourceY": 929,
+		"destX": 791,
+		"destY": 109
+	},
+	"FRANCE": {
+		"width": 263,
+		"height": 260,
+		"sourceX": 551,
+		"sourceY": 646,
+		"destX": 266,
+		"destY": 945
+	},
+	"GEORGIA": {
+		"width": 130,
+		"height": 67,
+		"sourceX": 1308,
+		"sourceY": 862,
+		"destX": 1194,
+		"destY": 1173
+	},
+	"GERMANY": {
+		"width": 188,
+		"height": 242,
+		"sourceX": 586,
+		"sourceY": 1104,
+		"destX": 483,
+		"destY": 813
+	},
+	"GREECE": {
+		"width": 128,
+		"height": 135,
+		"sourceX": 1175,
+		"sourceY": 1022,
+		"destX": 782,
+		"destY": 1225
+	},
+	"HUNGARY": {
+		"width": 133,
+		"height": 83,
+		"sourceX": 1175,
+		"sourceY": 862,
+		"destX": 699,
+		"destY": 1023
+	},
+	"IRELAND": {
+		"width": 88,
+		"height": 125,
+		"sourceX": 1350,
+		"sourceY": 326,
+		"destX": 88,
+		"destY": 125
+	},
+	"ITALY": {
+		"width": 237,
+		"height": 283,
+		"sourceX": 814,
+		"sourceY": 646,
+		"destX": 500,
+		"destY": 1071
+	},
+	"KOSOVO": {
+		"width": 30,
+		"height": 29,
+		"sourceX": 1051,
+		"sourceY": 750,
+		"destX": 779,
+		"destY": 1184
+	},
+	"LATVIA": {
+		"width": 146,
+		"height": 87,
+		"sourceX": 535,
+		"sourceY": 1346,
+		"destX": 798,
+		"destY": 691
+	},
+	"LITHUANIA": {
+		"width": 113,
+		"height": 89,
+		"sourceX": 1021,
+		"sourceY": 1231,
+		"destX": 800,
+		"destY": 755
+	},
+	"MACEDONIA": {
+		"width": 47,
+		"height": 39,
+		"sourceX": 439,
+		"sourceY": 1394,
+		"destX": 787,
+		"destY": 1208
+	},
+	"MOLDOVA": {
+		"width": 61,
+		"height": 93,
+		"sourceX": 1021,
+		"sourceY": 1320,
+		"destX": 919,
+		"destY": 1026
+	},
+	"MONTENEGRO": {
+		"width": 36,
+		"height": 33,
+		"sourceX": 1051,
+		"sourceY": 646,
+		"destX": 742,
+		"destY": 1175
+	},
+	"NETHERLANDS": {
+		"width": 71,
+		"height": 84,
+		"sourceX": 1175,
+		"sourceY": 1157,
+		"destX": 435,
+		"destY": 864
+	},
+	"NORWAY": {
+		"width": 537,
+		"height": 646,
+		"sourceX": 551,
+		"sourceY": 0,
+		"destX": 463,
+		"destY": 41
+	},
+	"POLAND": {
+		"width": 202,
+		"height": 207,
+		"sourceX": 384,
+		"sourceY": 1113,
+		"destX": 657,
+		"destY": 797
+	},
+	"PORTUGAL": {
+		"width": 62,
+		"height": 134,
+		"sourceX": 1303,
+		"sourceY": 1094,
+		"destX": 166,
+		"destY": 1214
+	},
+	"ROMANIA": {
+		"width": 189,
+		"height": 135,
+		"sourceX": 194,
+		"sourceY": 1270,
+		"destX": 785,
+		"destY": 1032
+	},
+	"RUSSIA": {
+		"width": 551,
+		"height": 1113,
+		"sourceX": 0,
+		"sourceY": 0,
+		"destX": 930,
+		"destY": 121
+	},
+	"SERBIA": {
+		"width": 78,
+		"height": 109,
+		"sourceX": 1350,
+		"sourceY": 612,
+		"destX": 754,
+		"destY": 1098
+	},
+	"SLOVAKIA": {
+		"width": 111,
+		"height": 54,
+		"sourceX": 681,
+		"sourceY": 1346,
+		"destX": 711,
+		"destY": 991
+	},
+	"SLOVENIA": {
+		"width": 56,
+		"height": 37,
+		"sourceX": 383,
+		"sourceY": 1394,
+		"destX": 641,
+		"destY": 1077
+	},
+	"SPAIN": {
+		"width": 248,
+		"height": 198,
+		"sourceX": 551,
+		"sourceY": 906,
+		"destX": 174,
+		"destY": 1170
+	},
+	"SWEDEN": {
+		"width": 262,
+		"height": 616,
+		"sourceX": 1088,
+		"sourceY": 246,
+		"destX": 596,
+		"destY": 169
+	},
+	"SWITZERLAND": {
+		"width": 88,
+		"height": 55,
+		"sourceX": 1350,
+		"sourceY": 451,
+		"destX": 486,
+		"destY": 1048
+	},
+	"TURKEY": {
+		"width": 384,
+		"height": 157,
+		"sourceX": 0,
+		"sourceY": 1113,
+		"destX": 904,
+		"destY": 1216
+	},
+	"UKRAINE": {
+		"width": 370,
+		"height": 246,
+		"sourceX": 1088,
+		"sourceY": 0,
+		"destX": 822,
+		"destY": 899
+	},
+	"UNITED_KINGDOM": {
+		"width": 154,
+		"height": 302,
+		"sourceX": 1021,
+		"sourceY": 929,
+		"destX": 239,
+		"destY": 302
 	}
 }
