@@ -180,39 +180,39 @@ init() {
 		if (gameState == GameState.MAP && atlas.baseCountry == null && e.which == 1) {
 			atlas.baseCountry = countryCode;
 			atlas.addCountry(countryCode);
-		}
+		} else {
+			if (gameState == GameState.MAP && atlas.baseCountry != null && e.which == 1) {
+				if (atlas.currentCountries.contains(countryCode)) atlas.from = new Point(downX + atlas.offset.x, downY + atlas.offset.y);
 
-		if (gameState == GameState.MAP && atlas.baseCountry != null && countryCode == atlas.baseCountry && e.which == 1) {
-			atlas.from = new Point(downX + atlas.offset.x, downY + atlas.offset.y);
-			atlas.downOffset = atlas.offset;
+				if (atlas.targetCountry == countryCode || atlas.currentCountries.contains(countryCode)) { // the player has taken over the country they clicked on
+					if (atlas.target != null) atlas.target = null;
 
-			if (atlas.target != null) atlas.target = null;
+					if (!atlas.currentCountries.contains(countryCode)) atlas.tempTarget = new Point(downX, downY);
 
-			if (atlas.currentCountries.contains(countryCode)) {
-				// the player has taken over the country they clicked on
-				mouseMoveStream = canvas.onMouseMove.listen((e) {
-					num moveX = e.offset.x;
-					num moveY = e.offset.y;
+					mouseMoveStream = canvas.onMouseMove.listen((e) {
+						num moveX = e.offset.x;
+						num moveY = e.offset.y;
 
-					atlas.tempTarget = new Point(moveX, moveY);
-				});
-			}
-		}
-
-		window.onMouseUp.listen((e) {
-			if (mouseMoveStream != null && countryCode == atlas.baseCountry) {
-				mouseMoveStream.cancel();
-
-				atlas.tempTarget = null;
-
-				String target = atlas.getCountry(e.offset.x, e.offset.y);
-
-				if (target != null && target != atlas.baseCountry && atlas.avaiableCountries.contains(target)) {
-					atlas.target = new Point(e.offset.x + atlas.offset.x, e.offset.y + atlas.offset.y);
-					atlas.targetCountry = target;
+						atlas.tempTarget = new Point(moveX, moveY);
+					});
 				}
 			}
-		});
+
+			window.onMouseUp.listen((e) {
+				if (mouseMoveStream != null && (atlas.avaiableCountries.contains(countryCode) || atlas.currentCountries.contains(countryCode))) {
+					mouseMoveStream.cancel();
+
+					atlas.tempTarget = null;
+
+					String target = atlas.getCountry(e.offset.x, e.offset.y);
+
+					if (target != null && target != atlas.baseCountry && atlas.avaiableCountries.contains(target)) {
+						atlas.target = new Point(e.offset.x + atlas.offset.x, e.offset.y + atlas.offset.y);
+						atlas.targetCountry = target;
+					}
+				}
+			});
+		}
 	});
 
 	window.onMouseUp.listen((e) {

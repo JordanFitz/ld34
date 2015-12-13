@@ -152,12 +152,10 @@ class Atlas {
 
 		List<String> borderingCountries = borders[countryCode];
 
-		borderingCountries.forEach((country) {
+		for (num i = 0; i < borderingCountries.length; i++) {
+			String country = borderingCountries[i];
 			if (!avaiableCountries.contains(country) && !currentCountries.contains(country)) avaiableCountries.add(country);
-		});
-
-		window.console.log(avaiableCountries);
-		window.console.log(currentCountries);
+		}
 	}
 
 	render(CanvasRenderingContext2D context, Texture spritesheet, Map textureRects) {
@@ -192,17 +190,30 @@ class Atlas {
 			}
 
 			if (target != null) {
+				num x = target.x - offset.x;
+				num y = target.y - offset.y;
+
+				context.lineTo(x, y);
+				context.stroke();
+			}
+
+			if(tempTarget != null || target != null) {
 				num circleWidth = textureRects["arrowsCenter"].width / 2;
 				num circleHeight = textureRects["arrowsCenter"].width / 2;
 
 				num arrowsWidth = textureRects["arrows"].width / 2;
 				num arrowsHeight = textureRects["arrows"].height / 2;
 
-				num x = target.x - offset.x;
-				num y = target.y - offset.y;
+				num x;
+				num y;
 
-				context.lineTo(x, y);
-				context.stroke();
+				if(target != null) {
+					x = target.x - offset.x;
+					y = target.y - offset.y;
+				} else {
+					x = tempTarget.x;
+					y = tempTarget.y;
+				}
 
 				context.drawImageToRect(spritesheet.image, new Rectangle(x - circleWidth / 2, y - circleHeight / 2, circleWidth, circleHeight), sourceRect: textureRects["arrowsCenter"]);
 
