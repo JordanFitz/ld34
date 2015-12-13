@@ -14,17 +14,10 @@ class FeatureSet {
 		Random random = new Random();
 
 		beardType = random.nextInt(6);
-		hatType = 1 + random.nextInt(9);
-		eyeType = 1 + random.nextInt(19);
+		hatType = random.nextInt(9);
+		eyeType = random.nextInt(19);
 
-		num eyeX;
-		num eyeY;
-
-
-
-		eyeRect = new Rectangle((eyeType / 4).floor() * 243, 678 + (eyeType / 5).floor() * 147, 243, 147);
-		hatRect = new Rectangle((hatType / 3).floor() * 301, 1263 + (hatType / 4).floor() * 241, 301, 241);
-
-		print(eyeRect.toString());
+		eyeRect = new Rectangle(0, 677 + (eyeType * 145), 240, 145);
+		hatRect = new Rectangle(240, 677 + (hatType * 256), 320, 256);
 	}
 }

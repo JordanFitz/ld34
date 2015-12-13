@@ -51,10 +51,10 @@ class Applicant {
 
 		context.drawImageToRect(spritesheet.image, bodyDestination, sourceRect: bodySource);
 
-		Rectangle eyeDestination = new Rectangle(width / 2 - 122, height - 200 - bodyHeight + 25, 243, 147);
+		Rectangle eyeDestination = new Rectangle(width / 2 - 120, height - 200 - bodyHeight + 10, 240, 145);
 		context.drawImageToRect(spritesheet.image, eyeDestination, sourceRect: visualFeatures.eyeRect);
 
-		Rectangle hatDestination = new Rectangle(width / 2 - 150.5, height - 200 - bodyHeight - 128, 301, 241);
+		Rectangle hatDestination = new Rectangle(width / 2 - 160, height - 200 - bodyHeight - 140, 320, 256);
 		context.drawImageToRect(spritesheet.image, hatDestination, sourceRect: visualFeatures.hatRect);
 
 		// Placeholder "graphics"
