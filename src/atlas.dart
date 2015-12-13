@@ -1,4 +1,5 @@
 import "dart:html";
+import "dart:convert";
 
 import "texture.dart";
 import "utils.dart" as utils;
@@ -91,6 +92,11 @@ class Atlas {
 		"MOLDOVA": "Moldova"
 	};
 
+	Map borders = new Map<String, List<String>>();
+
+	List<String> avaiableCountries = new List<String>();
+	List<String> currentCountries = new List<String>();
+
 	Point offset = new Point(85, 0);
 
 	Texture visibleMap = new Texture("images/map_friendly.png");
@@ -109,6 +115,11 @@ class Atlas {
 		colorsCanvas.height = height;
 
 		colorsContext = colorsCanvas.context2D;
+
+		HttpRequest.getString("borders.json").then((response) {
+			borders = JSON.decode(response);
+			window.console.log(borders.toString());
+		});
 	}
 
 	String getCountry(num x, num y) {
@@ -120,6 +131,25 @@ class Atlas {
 		if (countryCode == "NONE" || !countryCodes.containsKey(colorCode)) return null;
 
 		return countryCodes[colorCode];
+	}
+
+	addCountry(String countryCode) {
+		if (avaiableCountries.contains(countryCode)) {
+			avaiableCountries.remove(countryCode);
+		}
+
+		if (!currentCountries.contains(countryCode)) currentCountries.add(countryCode);
+
+		print(countryCode);
+
+		List<String> borderingCountries = borders[countryCode];
+
+		borderingCountries.forEach((country) {
+			if (!avaiableCountries.contains(country)) avaiableCountries.add(country);
+		});
+
+		window.console.log(avaiableCountries);
+		window.console.log(currentCountries);
 	}
 
 	render(CanvasRenderingContext2D context) {
@@ -141,11 +171,8 @@ class Atlas {
 			utils.drawText(context, "Select a base country", 21, 21, "Propaganda", 30, "rgba(255, 255, 255, 0.6)", false);
 			utils.drawText(context, "Select a base country", 20, 20, "Propaganda", 30, "#000", false);
 
-			utils.drawText(context, "Use WASD to pan", 21, 56, "Propaganda", 40, "rgba(255, 255, 255, 0.6)", false);
-			utils.drawText(context, "Use WASD to pan", 20, 55, "Propaganda", 40, "#000", false);
-		} else {
-			utils.drawText(context, baseCountry, 21, 21, "Propaganda", 30, "rgba(255, 255, 255, 0.6)", false);
-			utils.drawText(context, baseCountry, 20, 20, "Propaganda", 30, "#000", false);
+			/*utils.drawText(context, "Use WASD to pan", 21, 56, "Propaganda", 40, "rgba(255, 255, 255, 0.6)", false);
+			utils.drawText(context, "Use WASD to pan", 20, 55, "Propaganda", 40, "#000", false);*/
 		}
 	}
 }

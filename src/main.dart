@@ -65,20 +65,20 @@ update(num d) {
 	}
 
 	if(gameState == GameState.MAP) {
-		if(keys.containsKey(keycodes["w"])) {
-			atlas.offset += new Point(0, -0.5 * delta);
+		if(keys.containsKey(keycodes["w"]) || mouse.y < 200) {
+			atlas.offset += new Point(0, -0.3 * delta);
 		}
 
-		if(keys.containsKey(keycodes["s"])) {
-			atlas.offset += new Point(0, 0.5 * delta);
+		if(keys.containsKey(keycodes["s"]) || mouse.y > HEIGHT - 200) {
+			atlas.offset += new Point(0, 0.3 * delta);
 		}
 
-		if(keys.containsKey(keycodes["a"])) {
-			atlas.offset += new Point(-0.5 * delta, 0);
+		if(keys.containsKey(keycodes["a"]) || mouse.x < 200) {
+			atlas.offset += new Point(-0.3 * delta, 0);
 		}
 
-		if(keys.containsKey(keycodes["d"])) {
-			atlas.offset += new Point(0.5 * delta, 0);
+		if(keys.containsKey(keycodes["d"]) || mouse.x > WIDTH - 200) {
+			atlas.offset += new Point(0.3 * delta, 0);
 		}
 	}
 
@@ -105,11 +105,14 @@ draw() {
 	} else if (gameState == GameState.MAP) {
 		atlas.render(context);
 
-		String country = Atlas.countryNames[atlas.getCountry(mouse.x, mouse.y)];
+		String countryCode = atlas.getCountry(mouse.x, mouse.y);
+		String country = Atlas.countryNames[countryCode];
+
 
 		if (country != null) {
-			if(mouse.down && mouse.button == 1) {
-				atlas.baseCountry = country;
+			if(mouse.down && mouse.button == 1 && atlas.baseCountry == null) {
+				atlas.baseCountry = countryCode;
+				atlas.addCountry(countryCode);
 			}
 
 			utils.drawText(context, country, mouse.x + 1, mouse.y - 39, "Propaganda", 20, "rgba(255, 255, 255, 0.6)", true);
