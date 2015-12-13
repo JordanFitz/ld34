@@ -98,6 +98,7 @@ class Atlas {
 	List<String> currentCountries = new List<String>();
 
 	Point offset = new Point(85, 0);
+	Point downOffset = null;
 
 	Texture visibleMap = new Texture("images/map_friendly.png");
 	Texture coloredMap = new Texture("images/map_colors.png");
@@ -106,6 +107,14 @@ class Atlas {
 	CanvasRenderingContext2D colorsContext;
 
 	String baseCountry = null;
+
+	Point from = null;
+	Point target = null;
+	Point tempTarget = null;
+
+	String targetCountry = null;
+
+	num arrowsRotation = 0;
 
 	num width = 0;
 	num height = 0;
@@ -118,7 +127,6 @@ class Atlas {
 
 		HttpRequest.getString("borders.json").then((response) {
 			borders = JSON.decode(response);
-			window.console.log(borders.toString());
 		});
 	}
 
@@ -145,14 +153,14 @@ class Atlas {
 		List<String> borderingCountries = borders[countryCode];
 
 		borderingCountries.forEach((country) {
-			if (!avaiableCountries.contains(country)) avaiableCountries.add(country);
+			if (!avaiableCountries.contains(country) && !currentCountries.contains(country)) avaiableCountries.add(country);
 		});
 
 		window.console.log(avaiableCountries);
 		window.console.log(currentCountries);
 	}
 
-	render(CanvasRenderingContext2D context) {
+	render(CanvasRenderingContext2D context, Texture spritesheet, Map textureRects) {
 		if (offset.x < 85) offset = new Point(85, offset.y);
 		if (offset.y < 0) offset = new Point(offset.x, 0);
 
@@ -170,9 +178,45 @@ class Atlas {
 		if (baseCountry == null) {
 			utils.drawText(context, "Select a base country", 21, 21, "Propaganda", 30, "rgba(255, 255, 255, 0.6)", false);
 			utils.drawText(context, "Select a base country", 20, 20, "Propaganda", 30, "#000", false);
+		} else if (from != null) {
+			context.strokeStyle = "#4e1c1c";
+			context.setLineDash([10, 10]);
+			context.lineWidth = 5;
 
-			/*utils.drawText(context, "Use WASD to pan", 21, 56, "Propaganda", 40, "rgba(255, 255, 255, 0.6)", false);
-			utils.drawText(context, "Use WASD to pan", 20, 55, "Propaganda", 40, "#000", false);*/
+			context.beginPath();
+			context.moveTo(from.x - offset.x, from.y - offset.y);
+
+			if (tempTarget != null) {
+				context.lineTo(tempTarget.x, tempTarget.y);
+				context.stroke();
+			}
+
+			if (target != null) {
+				num circleWidth = textureRects["arrowsCenter"].width / 2;
+				num circleHeight = textureRects["arrowsCenter"].width / 2;
+
+				num arrowsWidth = textureRects["arrows"].width / 2;
+				num arrowsHeight = textureRects["arrows"].height / 2;
+
+				num x = target.x - offset.x;
+				num y = target.y - offset.y;
+
+				context.lineTo(x, y);
+				context.stroke();
+
+				context.drawImageToRect(spritesheet.image, new Rectangle(x - circleWidth / 2, y - circleHeight / 2, circleWidth, circleHeight), sourceRect: textureRects["arrowsCenter"]);
+
+				context.save();
+
+				context.translate(x - arrowsWidth / 2, y - arrowsHeight / 2);
+				context.translate(arrowsWidth / 2, arrowsHeight / 2);
+				context.rotate(arrowsRotation);
+				context.drawImageToRect(spritesheet.image, new Rectangle(-arrowsWidth / 2, -arrowsHeight / 2, arrowsWidth, arrowsHeight), sourceRect: textureRects["arrows"]);
+
+				context.restore();
+
+				arrowsRotation += 0.01;
+			}
 		}
 	}
 }
