@@ -1,7 +1,7 @@
 import "dart:html";
 import "dart:math";
 
-drawText(CanvasRenderingContext2D context, String text, num x, num y, String font, num size, String color, bool centered) {
+drawText(CanvasRenderingContext2D context, String text, num x, num y, String font, num size, String color, bool centered, {bool horiz: false}) {
 	String oldFillStyle = context.fillStyle;
 	String oldBaseline = context.textBaseline;
 	String oldAlign = context.textAlign;
@@ -9,7 +9,7 @@ drawText(CanvasRenderingContext2D context, String text, num x, num y, String fon
 
 	context.font = '${size}px "$font"';
 	context.textAlign = centered ? "center" : "left";
-	context.textBaseline = "top";
+	context.textBaseline = !horiz ? "top" : "middle";
 	context.fillStyle = color;
 	context.fillText(text, x, y);
 
@@ -45,6 +45,17 @@ drawTextWithShadow(CanvasRenderingContext2D context, String text, num x, num y, 
 	context.fillStyle = oldFillStyle;
 	context.strokeStyle = oldStroke;
 	context.lineWidth = oldLineWidth;
+}
+
+num measure(CanvasRenderingContext2D context, String text, String font, num size) {
+	String oldFont = context.font;
+
+	context.font = '${size}px "$font"';
+	num result = context.measureText(text).width;
+
+	context.font = oldFont;
+
+	return result;
 }
 
 drawRect(CanvasRenderingContext2D context, num x, num y, num width, num height, String color) {

@@ -23,7 +23,7 @@ class FadeToBlack {
 		if (finished) finished = false;
 
 		if (fading && direction == 1) {
-			opacity += 0.001 * delta;
+			opacity += 0.002 * delta;
 
 			if(opacity >= 1) {
 				fading = false;
@@ -32,7 +32,7 @@ class FadeToBlack {
 				finished = true;
 			}
 		} else if (fading && direction == 0) {
-			opacity -= 0.001 * delta;
+			opacity -= 0.002 * delta;
 
 			if(opacity <= 0) {
 				fading = false;

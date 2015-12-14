@@ -26,6 +26,9 @@ class Army {
 	num weekRecruits = 5;
 	num recruitStrength = 0;
 
+	bool won = false;
+	bool lost = false;
+
 	Army(this.country, this.atlas) {
 		Random random = new Random();
 
@@ -55,14 +58,6 @@ class Army {
 		});
 	}
 
-	hireApplicant(Applicant applicant) {
-		gold -= applicant.requiredGold;
-		food -= applicant.requiredFood;
-		strength += applicant.strength;
-
-		men.add(applicant);
-	}
-
 	bool attack(num currentStrength, String attacking) {
 		num enemyStrength = Atlas.strength[attacking];
 		num d = new Random().nextDouble();
@@ -84,6 +79,8 @@ class Army {
 		men.forEach((man) {
 			food -= man.requiredFood;
 		});
+
+		weekRecruits = 5;
 
 		String target = atlas.targetCountry;
 		String from = atlas.fromCountry;
@@ -204,5 +201,15 @@ class Army {
 		Atlas.strength.forEach((country, strength) {
 			if(strength < 0) Atlas.strength[country] = 0;
 		});
+
+		if (atlas.currentCountries.length <= 0) {
+			lost = true;
+			print("lost");
+		}
+
+		if (atlas.currentCountries.length == 39) {
+			won = true;
+			print("won");
+		}
 	}
 }

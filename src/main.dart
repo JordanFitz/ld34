@@ -20,7 +20,7 @@ num backgroundOpacity = 0.0;
 bool backgroundDirection = false;
 
 enum GameState {
-	MENU, MAP, INTERVIEW, NEWS
+	MENU, MAP, INTERVIEW, NEWS, OVER
 }
 
 GameState gameState = GameState.MENU;
@@ -52,6 +52,8 @@ FadeToBlack fadeToBlack = new FadeToBlack();
 FadeToBlack interviewTransition = new FadeToBlack();
 
 update(num d) {
+	if (gameState == GameState.MAP && !fadeToBlack.fading && army != null && (army.lost || army.won)) gameState = GameState.OVER;
+
 	num delta = d - lastDelta;
 
 	if (backgroundDirection) {
@@ -204,14 +206,12 @@ draw() {
 
 		applicant.render(context, textures["spritesheet"], textureRects, WIDTH, HEIGHT);
 
-		/*utils.drawRect(context, 0, 0, WIDTH, 50, "#C4C4C4");
-		utils.drawRect(context, 0, 0, 75, HEIGHT, "#C4C4C4");
-		utils.drawRect(context, WIDTH - 75, 0, 75, HEIGHT, "#C4C4C4");
-		utils.drawRect(context, 0, HEIGHT - 200, WIDTH, 200, "#C4C4C4");*/
-
 		interviewTransition.render(context, WIDTH, HEIGHT);
 
 		context.drawImage(textures["applicantOverlay"].image, 0, 0);
+
+		utils.drawText(context, "Food: ${army.food}", 50, 5, "Propaganda", 25, "#e5e5e5", false);
+		utils.drawText(context, "Gold: ${army.gold}", 65 + utils.measure(context, "Food: ${army.food}", "Propaganda", 25), 5, "Propaganda", 25, "#e5e5e5", false);
 
 		context.globalAlpha = 0.93;
 
@@ -223,6 +223,7 @@ draw() {
 				army.men.add(applicant);
 				army.recruitStrength += applicant.strength;
 				army.weekRecruits--;
+				army.gold -= applicant.requiredGold;
 				interviewTransition.fade();
 			}
 		}
@@ -259,6 +260,14 @@ draw() {
 		if (mouse.down && utils.within(mouse.x, mouse.y, WIDTH - 150, HEIGHT - 50, 120, 20)) {
 			gameState = GameState.MAP;
 			fadeToBlack.fade();
+		}
+	} else if (gameState == GameState.OVER) {
+		if (army.won) {
+			utils.drawText(context, "You won!", WIDTH / 2, HEIGHT / 2, "Propaganda", 75, "#000", true, horiz: true);
+			utils.drawText(context, "(click anywhere to restart)", WIDTH / 2, HEIGHT / 2 + 40, "Propaganda", 17, "#000", true, horiz: true);
+		} else if (army.lost) {
+			utils.drawText(context, "You lost", WIDTH / 2, HEIGHT / 2, "Propaganda", 75, "#000", true, horiz: true);
+			utils.drawText(context, "(click anywhere to restart)", WIDTH / 2, HEIGHT / 2 + 40, "Propaganda", 17, "#000", true, horiz: true);
 		}
 	}
 }
@@ -444,6 +453,10 @@ init() {
 	canvas.onContextMenu.listen((e) => e.preventDefault());
 
 	window.onMouseUp.listen((e) {
+		if(gameState == GameState.OVER) {
+			window.location.href = window.location.href;
+		}
+
 		mouse.down = false;
 	});
 
