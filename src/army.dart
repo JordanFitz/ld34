@@ -23,6 +23,9 @@ class Army {
 
 	Atlas atlas;
 
+	num weekRecruits = 5;
+	num recruitStrength = 0;
+
 	Army(this.country, this.atlas) {
 		Random random = new Random();
 

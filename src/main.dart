@@ -1,5 +1,6 @@
 import "dart:html";
 import "dart:async";
+import "dart:math";
 
 import "utils.dart" as utils;
 import "mouse.dart" as mouse;
@@ -22,7 +23,7 @@ enum GameState {
 	MENU, MAP, INTERVIEW, NEWS
 }
 
-GameState gameState = GameState.INTERVIEW;
+GameState gameState = GameState.MENU;
 
 Map keys = new Map<num, bool>();
 Map keycodes = {
@@ -143,7 +144,7 @@ draw() {
 		if(atlas.baseCountry != null) {
 			context.globalAlpha = 1;
 
-			if(!utils.withinBox(mouse.x, mouse.y, textureLocations["nextButton"])) {
+			if (!utils.withinBox(mouse.x, mouse.y, textureLocations["nextButton"])) {
 				context.globalAlpha = 0.95;
 			} else if (mouse.down) {
 				context.globalAlpha = 1;
@@ -153,20 +154,21 @@ draw() {
 			context.drawImageToRect(textures["spritesheet"].image, textureLocations["nextButton"], sourceRect: textureRects["nextButton"]);
 
 			context.globalAlpha = 1;
+			if (army.weekRecruits > 0) {
+				if (!utils.withinBox(mouse.x, mouse.y, textureLocations["recruitButton"])) {
+					context.globalAlpha = 0.95;
+				} else if (mouse.down) {
+					if (!interviewTransition.fading) interviewTransition.fade();
+				}
 
-			if(!utils.withinBox(mouse.x, mouse.y, textureLocations["recruitButton"])) {
-				context.globalAlpha = 0.95;
-			} else if (mouse.down) {
-				if (!interviewTransition.fading) interviewTransition.fade();
+				if (interviewTransition.finished) {
+					gameState = GameState.INTERVIEW;
+				}
+
+				context.drawImageToRect(textures["spritesheet"].image, textureLocations["recruitButton"], sourceRect: textureRects["recruitButton"]);
+
+				context.globalAlpha = 1;
 			}
-
-			if(interviewTransition.finished) {
-				gameState = GameState.INTERVIEW;
-			}
-
-			context.drawImageToRect(textures["spritesheet"].image, textureLocations["recruitButton"], sourceRect: textureRects["recruitButton"]);
-
-			context.globalAlpha = 1;
 		}
 
 		interviewTransition.render(context, WIDTH, HEIGHT);
@@ -175,7 +177,27 @@ draw() {
 
 	if (gameState == GameState.INTERVIEW) {
 		if(interviewTransition.finished && interviewTransition.direction == 0) {
+			if(army.weekRecruits <= 0) {
+				List<String> strengthDumpCandidates = new List<String>();
+
+				Atlas.strength.forEach((country, strength) {
+					if(atlas.currentCountries.contains(country)) {
+						strengthDumpCandidates.add(country);
+					}
+				});
+
+				String randomCountry = strengthDumpCandidates[new Random().nextInt(strengthDumpCandidates.length)];
+
+				Atlas.strength[randomCountry] += army.recruitStrength;
+				army.strength += army.recruitStrength;
+				army.recruitStrength = 0;
+
+				gameState = GameState.MAP;
+			}
+
 			interviewTransition.fade();
+			applicant = new Applicant();
+			applicant.randomize();
 		}
 
 		context.drawImage(textures["applicantBackground"].image, 0, 0);
@@ -187,13 +209,22 @@ draw() {
 		utils.drawRect(context, WIDTH - 75, 0, 75, HEIGHT, "#C4C4C4");
 		utils.drawRect(context, 0, HEIGHT - 200, WIDTH, 200, "#C4C4C4");*/
 
+		interviewTransition.render(context, WIDTH, HEIGHT);
+
 		context.drawImage(textures["applicantOverlay"].image, 0, 0);
 
 		context.globalAlpha = 0.93;
 
 		if (utils.withinBox(mouse.x, mouse.y, textureLocations["acceptButton"])) {
 			context.globalAlpha = 0.9;
-			if (mouse.down) context.globalAlpha = 1;
+
+			if (mouse.down && !interviewTransition.fading) {
+				context.globalAlpha = 1;
+				army.men.add(applicant);
+				army.recruitStrength += applicant.strength;
+				army.weekRecruits--;
+				interviewTransition.fade();
+			}
 		}
 
 		context.drawImageToRect(textures["spritesheet"].image, textureLocations["acceptButton"], sourceRect: textureRects["acceptButton"]);
@@ -202,14 +233,16 @@ draw() {
 
 		if (utils.withinBox(mouse.x, mouse.y, textureLocations["denyButton"])) {
 			context.globalAlpha = 0.9;
-			if (mouse.down) context.globalAlpha = 1;
+			if (mouse.down && !interviewTransition.fading) {
+				context.globalAlpha = 1;
+				army.weekRecruits--;
+				interviewTransition.fade();
+			}
 		}
 
 		context.drawImageToRect(textures["spritesheet"].image, textureLocations["denyButton"], sourceRect: textureRects["denyButton"]);
 
 		context.globalAlpha = 1;
-
-		interviewTransition.render(context, WIDTH, HEIGHT);
 	} else if (gameState == GameState.NEWS) {
 		utils.drawRect(context, 0, 0, WIDTH, HEIGHT, "#000");
 
@@ -247,7 +280,7 @@ init() {
 
 	window.onKeyUp.listen((e) {
 		if(keys.containsKey(keycodes["r"])) {
-			applicant.randomize();
+//			applicant.randomize();
 		}
 
 		keys.remove(e.keyCode);

@@ -51,7 +51,7 @@ class Applicant {
 
 		utils.drawText(context, "$strength", 200, 225, "Propaganda", 25, "#bcbcbc", false);
 		utils.drawText(context, "$requiredFood", 282, 225, "Propaganda", 25, "#bcbcbc", false);
-		utils.drawText(context, "$requiredGold", 205, 295, "Propaganda", 25, "#bcbcbc", false);
+		utils.drawText(context, "$requiredGold", 200, 295, "Propaganda", 25, "#bcbcbc", false);
 
 		Rectangle bodySource = new Rectangle(this.height * 226, 230, 226, bodyHeight);
 		Rectangle bodyDestination = new Rectangle(width / 2 - 113, height - 200 - bodyHeight, 226, bodyHeight);
