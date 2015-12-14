@@ -28,7 +28,7 @@ class Army {
 
 		gold = 80;
 		food = 100;
-		strength = 6 + atlas.availableCountries.length * (1 + random.nextInt(2));
+		strength = 0;
 
 		Atlas.strength[country] = strength;
 
@@ -98,9 +98,11 @@ class Army {
 
 				strength += (enemyStrength / 2).floor();
 				food += ((enemyStrength / 4) * (1 + new Random().nextInt(5))).floor();
+				gold += ((enemyStrength / 2) * (1 + new Random().nextInt(5))).floor();
 
 				events.add("${Atlas.countryNames[atlas.targetCountry]} was captured by ${Atlas.countryNames[atlas.fromCountry]}!");
 			} else {
+				Atlas.strength[atlas.fromCountry] = (Atlas.strength[atlas.fromCountry] / 5) * 4;
 				events.add("${Atlas.countryNames[atlas.targetCountry]} failed to capture ${Atlas.countryNames[atlas.fromCountry]}.");
 			}
 
@@ -108,7 +110,9 @@ class Army {
 			atlas.fromCountry = null;
 			atlas.target = null;
 			atlas.targetCountry = null;
-		} else if (atlas.defenseTarget != null) {
+		}
+
+		if (atlas.defenseTarget != null) {
 			Atlas.strength[atlas.defenseFromCountry] -= atlas.defenseSlider.getValue();
 			Atlas.strength[atlas.defenseTargetCountry] += atlas.defenseSlider.getValue();
 
@@ -158,7 +162,7 @@ class Army {
 
 					events.add("Ally ${Atlas.countryNames[randomAttacker]} has deafated ${Atlas.countryNames[possibleAttackers[randomAttacker]]}!");
 				} else {
-					events.add("Ally ${Atlas.countryNames[randomAttacker]} failed to deafat ${Atlas.countryNames[possibleAttackers[randomAttacker]]}!");
+					events.add("Ally ${Atlas.countryNames[randomAttacker]} failed to deafat ${Atlas.countryNames[possibleAttackers[randomAttacker]]}.");
 				}
 			}
 		}
@@ -192,5 +196,10 @@ class Army {
 
 			week++;
 		}
+
+//		hacky fix to -strength bug
+		Atlas.strength.forEach((country, strength) {
+			if(strength < 0) Atlas.strength[country] = 0;
+		});
 	}
 }

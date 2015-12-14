@@ -22,7 +22,7 @@ enum GameState {
 	MENU, MAP, INTERVIEW, NEWS
 }
 
-GameState gameState = GameState.MAP;
+GameState gameState = GameState.INTERVIEW;
 
 Map keys = new Map<num, bool>();
 Map keycodes = {
@@ -48,6 +48,7 @@ Atlas atlas = new Atlas(WIDTH, HEIGHT);
 Army army;
 
 FadeToBlack fadeToBlack = new FadeToBlack();
+FadeToBlack interviewTransition = new FadeToBlack();
 
 update(num d) {
 	num delta = d - lastDelta;
@@ -70,7 +71,7 @@ update(num d) {
 		gameState = GameState.MAP;
 	}
 
-	if(gameState == GameState.MAP && !fadeToBlack.fading) {
+	if(gameState == GameState.MAP && !fadeToBlack.fading && !interviewTransition.fading) {
 		Rectangle buttons = new Rectangle(textureLocations["recruitButton"].left,
 				textureLocations["nextButton"].top,
 				textureLocations["nextButton"].width + textureLocations["recruitButton"].width + 40,
@@ -101,6 +102,7 @@ update(num d) {
 	}
 
 	fadeToBlack.update(delta);
+	interviewTransition.update(delta);
 
 	lastDelta = d;
 }
@@ -152,22 +154,38 @@ draw() {
 
 			context.globalAlpha = 1;
 
-			if(!utils.withinBox(mouse.x, mouse.y, textureLocations["recruitButton"])) context.globalAlpha = 0.95;
+			if(!utils.withinBox(mouse.x, mouse.y, textureLocations["recruitButton"])) {
+				context.globalAlpha = 0.95;
+			} else if (mouse.down) {
+				if (!interviewTransition.fading) interviewTransition.fade();
+			}
+
+			if(interviewTransition.finished) {
+				gameState = GameState.INTERVIEW;
+			}
+
 			context.drawImageToRect(textures["spritesheet"].image, textureLocations["recruitButton"], sourceRect: textureRects["recruitButton"]);
 
 			context.globalAlpha = 1;
 		}
 
+		interviewTransition.render(context, WIDTH, HEIGHT);
 		fadeToBlack.render(context, WIDTH, HEIGHT);
-	} else if (gameState == GameState.INTERVIEW) {
-		utils.drawRect(context, 0, 0, WIDTH, HEIGHT, "#4D4D4D");
+	}
 
-		applicant.render(context, textures["spritesheet"], WIDTH, HEIGHT);
+	if (gameState == GameState.INTERVIEW) {
+		if(interviewTransition.finished && interviewTransition.direction == 0) {
+			interviewTransition.fade();
+		}
 
-		utils.drawRect(context, 0, 0, WIDTH, 50, "#C4C4C4");
+		context.drawImage(textures["applicantBackground"].image, 0, 0);
+
+		applicant.render(context, textures["spritesheet"], textureRects, WIDTH, HEIGHT);
+
+		/*utils.drawRect(context, 0, 0, WIDTH, 50, "#C4C4C4");
 		utils.drawRect(context, 0, 0, 75, HEIGHT, "#C4C4C4");
 		utils.drawRect(context, WIDTH - 75, 0, 75, HEIGHT, "#C4C4C4");
-		utils.drawRect(context, 0, HEIGHT - 200, WIDTH, 200, "#C4C4C4");
+		utils.drawRect(context, 0, HEIGHT - 200, WIDTH, 200, "#C4C4C4");*/
 
 		context.drawImage(textures["applicantOverlay"].image, 0, 0);
 
@@ -190,6 +208,8 @@ draw() {
 		context.drawImageToRect(textures["spritesheet"].image, textureLocations["denyButton"], sourceRect: textureRects["denyButton"]);
 
 		context.globalAlpha = 1;
+
+		interviewTransition.render(context, WIDTH, HEIGHT);
 	} else if (gameState == GameState.NEWS) {
 		utils.drawRect(context, 0, 0, WIDTH, HEIGHT, "#000");
 
@@ -255,7 +275,7 @@ init() {
 			atlas.baseCountry = countryCode;
 			atlas.addCountry(countryCode);
 			army = new Army(countryCode, atlas);
-		} else if (gameState == GameState.MAP && atlas.baseCountry != null && e.which == 1 && (atlas.defenseTarget == null && atlas.defenseTempTarget == null)) {
+		} else if (gameState == GameState.MAP && atlas.baseCountry != null && e.which == 1) {
 			if (atlas.slider != null && atlas.slider.rect != null && utils.withinBox(downX, downY, atlas.slider.rect)) {
 				num dx = downX;
 
@@ -319,7 +339,7 @@ init() {
 					}
 				});
 			}
-		} else if (gameState == GameState.MAP && atlas.baseCountry != null && e.which == 3 && (atlas.target == null && atlas.tempTarget == null)) {
+		} else if (gameState == GameState.MAP && atlas.baseCountry != null && e.which == 3) {
 			e.preventDefault();
 
 			if (atlas.currentCountries.contains(countryCode)) {
@@ -396,12 +416,13 @@ init() {
 
 	textures["spritesheet"] = new Texture("images/spritesheet.png");
 	textures["applicantOverlay"] = new Texture("images/applicant_overlay.png");
+	textures["applicantBackground"] = new Texture("images/applicant_background.png");
 
 	textureRects["acceptButton"] = new Rectangle(0, 0, 249, 230);
-	textureLocations["acceptButton"] = new Rectangle(425, HEIGHT - 150, 124.5, 115);
+	textureLocations["acceptButton"] = new Rectangle(450, HEIGHT - 140, 124.5, 115);
 
 	textureRects["denyButton"] = new Rectangle(249, 0, 249, 230);
-	textureLocations["denyButton"] = new Rectangle(WIDTH - 425 - 124.5, HEIGHT - 150, 124.5, 115);
+	textureLocations["denyButton"] = new Rectangle(WIDTH - 450 - 124.5, HEIGHT - 140, 124.5, 115);
 
 	textureRects["arrowsCenter"] = new Rectangle(497, 0, 56, 52);
 	textureRects["arrows"] = new Rectangle(497, 52, 148, 138);
@@ -415,6 +436,8 @@ init() {
 
 	textureRects["recruitButton"] = new Rectangle(452, 542, 115, 72);
 	textureLocations["recruitButton"] =  new Rectangle(WIDTH - textureRects["recruitButton"].width - textureRects["nextButton"].width - 40, HEIGHT - 60 - (textureRects["recruitButton"].height / 2), textureRects["recruitButton"].width, textureRects["recruitButton"].height);
+
+	textureRects["statsBoard"] = new Rectangle(0, 3425, 225, 351);
 
 	applicant.randomize();
 

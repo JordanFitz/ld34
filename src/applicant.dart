@@ -20,15 +20,15 @@ class Applicant {
 
 		strength = utils.chance(random.nextDouble(), 11);
 
-		requiredGold = (1 + random.nextInt(15) / (strength / 4)).round();
-		requiredFood = (1 + random.nextInt(15) / (strength / 4)).round();
+		requiredGold = (1 + random.nextInt(15) / (strength / 10)).round();
+		requiredFood = (1 + random.nextInt(15) / (strength / 3)).round();
 
 		height = random.nextInt(3);
 
 		visualFeatures.randomize();
 	}
 
-	render(CanvasRenderingContext2D context, Texture spritesheet, num width, num height) {
+	render(CanvasRenderingContext2D context, Texture spritesheet, Map<String, Rectangle> textureRects, num width, num height) {
 		num bodyHeight = 0;
 
 		switch (this.height) {
@@ -46,6 +46,13 @@ class Applicant {
 				break;
 		}
 
+		Rectangle statsDestination = new Rectangle(125, 0, textureRects["statsBoard"].width, textureRects["statsBoard"].height);
+		context.drawImageToRect(spritesheet.image, statsDestination, sourceRect: textureRects["statsBoard"]);
+
+		utils.drawText(context, "$strength", 200, 225, "Propaganda", 25, "#bcbcbc", false);
+		utils.drawText(context, "$requiredFood", 282, 225, "Propaganda", 25, "#bcbcbc", false);
+		utils.drawText(context, "$requiredGold", 205, 295, "Propaganda", 25, "#bcbcbc", false);
+
 		Rectangle bodySource = new Rectangle(this.height * 226, 230, 226, bodyHeight);
 		Rectangle bodyDestination = new Rectangle(width / 2 - 113, height - 200 - bodyHeight, 226, bodyHeight);
 
@@ -54,13 +61,13 @@ class Applicant {
 		Rectangle eyeDestination = new Rectangle(width / 2 - 120, height - 200 - bodyHeight + 10, 240, 145);
 		context.drawImageToRect(spritesheet.image, eyeDestination, sourceRect: visualFeatures.eyeRect);
 
-		if (visualFeatures.hatType != 0) {
-			Rectangle hatDestination = new Rectangle(width / 2 - 160, height - 200 - bodyHeight - 140, 320, 256);
-			context.drawImageToRect(spritesheet.image, hatDestination, sourceRect: visualFeatures.hatRect);
-		}
+		Rectangle mouthAreaDestination = new Rectangle(width / 2 - 125, height - 200 - bodyHeight - 30, 250, 250);
 
-		if (visualFeatures.beardType != 0) {
+		context.drawImageToRect(spritesheet.image, mouthAreaDestination, sourceRect: visualFeatures.mouthRect);
+		context.drawImageToRect(spritesheet.image, mouthAreaDestination, sourceRect: visualFeatures.mustacheRect);
+		context.drawImageToRect(spritesheet.image, mouthAreaDestination, sourceRect: visualFeatures.beardRect);
 
-		}
+		Rectangle hatDestination = new Rectangle(width / 2 - 160, height - 200 - bodyHeight - 140, 320, 256);
+		context.drawImageToRect(spritesheet.image, hatDestination, sourceRect: visualFeatures.hatRect);
 	}
 }
