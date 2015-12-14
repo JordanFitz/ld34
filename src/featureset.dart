@@ -14,7 +14,7 @@ class FeatureSet {
 		Random random = new Random();
 
 		beardType = random.nextInt(6);
-		hatType = random.nextInt(9);
+		hatType = random.nextInt(10);
 		eyeType = random.nextInt(19);
 
 		eyeRect = new Rectangle(0, 677 + (eyeType * 145), 240, 145);

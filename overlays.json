@@ -140,8 +140,8 @@
 		"height": 125,
 		"sourceX": 1350,
 		"sourceY": 326,
-		"destX": 88,
-		"destY": 125
+		"destX": 152,
+		"destY": 795
 	},
 	"ITALY": {
 		"width": 237,
@@ -317,6 +317,6 @@
 		"sourceX": 1021,
 		"sourceY": 929,
 		"destX": 239,
-		"destY": 302
+		"destY": 668
 	}
 }

@@ -54,19 +54,12 @@ class Applicant {
 		Rectangle eyeDestination = new Rectangle(width / 2 - 120, height - 200 - bodyHeight + 10, 240, 145);
 		context.drawImageToRect(spritesheet.image, eyeDestination, sourceRect: visualFeatures.eyeRect);
 
-		Rectangle hatDestination = new Rectangle(width / 2 - 160, height - 200 - bodyHeight - 140, 320, 256);
-		context.drawImageToRect(spritesheet.image, hatDestination, sourceRect: visualFeatures.hatRect);
-
-		// Placeholder "graphics"
 		if (visualFeatures.hatType != 0) {
-
+			Rectangle hatDestination = new Rectangle(width / 2 - 160, height - 200 - bodyHeight - 140, 320, 256);
+			context.drawImageToRect(spritesheet.image, hatDestination, sourceRect: visualFeatures.hatRect);
 		}
 
 		if (visualFeatures.beardType != 0) {
-
-		}
-
-		if (visualFeatures.eyeType != 0) {
 
 		}
 	}

@@ -19,6 +19,11 @@ drawText(CanvasRenderingContext2D context, String text, num x, num y, String fon
 	context.fillStyle = oldFillStyle;
 }
 
+drawTextWithShadow(CanvasRenderingContext2D context, String text, num x, num y, String font, num size, bool centered) {
+	drawText(context, text, x + 1, y + 1, font, size, "rgba(255,255,255,0.5)", centered);
+	drawText(context, text, x, y, font, size, "rgba(0,0,0,0.9)", centered);
+}
+
 drawRect(CanvasRenderingContext2D context, num x, num y, num width, num height, String color) {
 	String oldFillStyle = context.fillStyle;
 

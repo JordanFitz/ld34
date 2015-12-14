@@ -1,8 +1,11 @@
 import "dart:html";
 import "dart:convert";
+import "dart:math";
 
 import "texture.dart";
 import "utils.dart" as utils;
+import "army.dart";
+import "slider.dart";
 
 class Atlas {
 	static Map countryCodes = {
@@ -54,7 +57,7 @@ class Atlas {
 		"FINLAND": "Finland",
 		"SWEDEN": "Sweden",
 		"DENMARK": "Denmark",
-		"RUSSIA": "Russia",
+//		"RUSSIA": "Russia",
 		"UNITED_KINGDOM": "United Kingdom",
 		"IRELAND": "Ireland",
 		"FRANCE": "France",
@@ -92,8 +95,9 @@ class Atlas {
 		"MOLDOVA": "Moldova"
 	};
 
-	Map borders = new Map<String, List<String>>();
-	Map overlays = new Map<String, Map<String, num>>();
+	static Map borders = new Map<String, List<String>>();
+	static Map overlays = new Map<String, Map<String, num>>();
+	static Map strength = new Map<String, num>();
 
 	List<String> availableCountries = new List<String>();
 	List<String> currentCountries = new List<String>();
@@ -108,6 +112,7 @@ class Atlas {
 	Texture coloredMap = new Texture("images/map_colors.png");
 	Texture outlineMap = new Texture("images/map_outline.png");
 	Texture countryOverlays = new Texture("images/overlays.png");
+	Texture enemyOverlays = new Texture("images/overlays_blue.png");
 
 	CanvasElement colorsCanvas = new CanvasElement();
 	CanvasRenderingContext2D colorsContext;
@@ -119,6 +124,8 @@ class Atlas {
 	Point tempTarget = null;
 
 	String targetCountry = null;
+
+	Slider slider;
 
 	num arrowsRotation = 0;
 
@@ -138,6 +145,10 @@ class Atlas {
 		HttpRequest.getString("overlays.json").then((response) {
 			overlays = JSON.decode(response);
 		});
+
+		Atlas.countryNames.forEach((String countryCode, String countryName) {
+			strength[countryCode] = (5 + new Random().nextInt(5));
+		});
 	}
 
 	String getCountry(num x, num y) {
@@ -152,6 +163,10 @@ class Atlas {
 	}
 
 	addCountry(String countryCode) {
+		if (strength.containsKey(baseCountry)) {
+			strength.remove(baseCountry);
+		}
+
 		if (availableCountries.contains(countryCode)) {
 			availableCountries.remove(countryCode);
 		}
@@ -174,7 +189,7 @@ class Atlas {
 		}
 	}
 
-	render(CanvasRenderingContext2D context, Texture spritesheet, Map textureRects) {
+	render(CanvasRenderingContext2D context, Army army, Texture spritesheet, Map textureRects) {
 		if (offset.x < 85) offset = new Point(85, offset.y);
 		if (offset.y < 0) offset = new Point(offset.x, 0);
 
@@ -208,11 +223,19 @@ class Atlas {
 			context.drawImageToRect(countryOverlays.image, overlayDestination, sourceRect: overlaySource);
 		});
 
+		if (army != null) {
+			army.enemyOverlays.forEach((overlay) {
+				Rectangle overlaySource = new Rectangle(overlay["sourceX"], overlay["sourceY"], overlay["width"], overlay["height"]);
+				Rectangle overlayDestination = new Rectangle(overlay["destX"] - offset.x, overlay["destY"] - offset.y, overlay["width"], overlay["height"]);
+
+				context.drawImageToRect(enemyOverlays.image, overlayDestination, sourceRect: overlaySource);
+			});
+		}
+
 		context.drawImage(outlineMap.image, -offset.x, -offset.y);
 
 		if (baseCountry == null) {
-			utils.drawText(context, "Select a base country", 21, 21, "Propaganda", 30, "rgba(255, 255, 255, 0.6)", false);
-			utils.drawText(context, "Select a base country", 20, 20, "Propaganda", 30, "#000", false);
+			utils.drawTextWithShadow(context, "Select a base country", 20, 20, "Propaganda", 30, false);
 		} else if (from != null) {
 			context.setLineDash([14, 14]);
 			context.strokeStyle = "#fff";
@@ -247,21 +270,27 @@ class Atlas {
 				if(target != null) {
 					x = target.x - offset.x;
 					y = target.y - offset.y;
+
+					if(slider == null) {
+						slider = new Slider(strength[targetCountry], army.strength < strength[targetCountry] ? army.strength : strength[targetCountry]);
+					}
+
+					slider.render(context, spritesheet, textureRects, x, y - 70);
 				} else {
 					x = tempTarget.x;
 					y = tempTarget.y;
+
+					slider = null;
 				}
 
 				context.drawImageToRect(spritesheet.image, new Rectangle(x - circleWidth / 2, y - circleHeight / 2, circleWidth, circleHeight), sourceRect: textureRects["arrowsCenter"]);
-
-				context.save();
 
 				context.translate(x - arrowsWidth / 2, y - arrowsHeight / 2);
 				context.translate(arrowsWidth / 2, arrowsHeight / 2);
 				context.rotate(arrowsRotation);
 				context.drawImageToRect(spritesheet.image, new Rectangle(-arrowsWidth / 2, -arrowsHeight / 2, arrowsWidth, arrowsHeight), sourceRect: textureRects["arrows"]);
 
-				context.restore();
+				context.setTransform(1, 0, 0, 1, 0, 0);
 
 				arrowsRotation += 0.01;
 			}
