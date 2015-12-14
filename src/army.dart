@@ -129,6 +129,13 @@ class Army {
 				if(attack(Atlas.strength[randomAttacker], possibleAttackers[randomAttacker])) {
 					strength -= Atlas.strength[possibleAttackers[randomAttacker]];
 
+					if (Atlas.strength[randomAttacker] > Atlas.strength[possibleAttackers[randomAttacker]]) {
+						Atlas.strength[possibleAttackers[randomAttacker]] += Atlas.strength[possibleAttackers[randomAttacker]];
+						Atlas.strength[randomAttacker] -= Atlas.strength[randomAttacker];
+					} else {
+						Atlas.strength[randomAttacker] -= Atlas.strength[possibleAttackers[randomAttacker]];
+					}
+
 					atlas.removeCountry(possibleAttackers[randomAttacker]);
 
 					enemies[possibleAttackers[randomAttacker]] = possibleAttackers[randomAttacker];

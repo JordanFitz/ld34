@@ -293,9 +293,6 @@ init() {
 
 							String target = atlas.getCountry(e.offset.x, e.offset.y);
 
-							print(Atlas.borders[atlas.fromCountry].toString());
-							print(atlas.fromCountry);
-
 							if (target != null && Atlas.borders[atlas.fromCountry].contains(target) && atlas.availableCountries.contains(target)) {
 								atlas.target = new Point(e.offset.x + atlas.offset.x, e.offset.y + atlas.offset.y);
 								atlas.targetCountry = target;
