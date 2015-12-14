@@ -95,7 +95,7 @@ draw() {
 		context.fillStyle = "rgba(0, 0, 0, $backgroundOpacity)";
 		context.fillRect(0, 0, WIDTH, HEIGHT);
 
-		utils.drawText(context, "TwoButtons,", WIDTH / 2, 250, "Propaganda", 60, "#000", true);
+		utils.drawText(context, "Twobuttons", WIDTH / 2, 250, "Propaganda", 60, "#000", true);
 		utils.drawText(context, "Controls", WIDTH / 2, 300, "Propaganda", 60, "#000", true);
 
 		if (utils.withinBox(mouse.x, mouse.y, playButton)) {
@@ -117,8 +117,6 @@ draw() {
 			} else {
 				utils.drawTextWithShadow(context, country, mouse.x, mouse.y - 40, "Propaganda", 25, true);
 			}
-		} else if (country != null && (atlas.slider == null || atlas.slider.rect == null || !utils.withinBox(mouse.x, mouse.y, atlas.slider.rect))) {
-//			utils.drawTextWithShadow(context, "[${Atlas.strength[countryCode]}] $country", mouse.x, mouse.y - 40, "Propaganda", 25, true);
 		}
 	} else if (gameState == GameState.INTERVIEW) {
 		utils.drawRect(context, 0, 0, WIDTH, HEIGHT, "#4D4D4D");
@@ -258,7 +256,7 @@ init() {
 
 							String target = atlas.getCountry(e.offset.x, e.offset.y);
 
-							if (mouseMoved == true && target != null && target != atlas.baseCountry && atlas.availableCountries.contains(target)) {
+							if (mouseMoved == true && target != null && !atlas.currentCountries.contains(target) && atlas.availableCountries.contains(target)) {
 								atlas.target = new Point(e.offset.x + atlas.offset.x, e.offset.y + atlas.offset.y);
 								atlas.targetCountry = target;
 							}

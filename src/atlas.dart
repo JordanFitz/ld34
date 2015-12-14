@@ -103,7 +103,6 @@ class Atlas {
 	List<String> currentCountries = new List<String>();
 
 	List<Map<String, num>> currentOverlays = new List<Map<String, num>>();
-	List<Map<String, num>> availableOverlays = new List<Map<String, num>>();
 
 	Point offset = new Point(85, 0);
 	Point downOffset = null;
@@ -179,9 +178,27 @@ class Atlas {
 			String country = borderingCountries[i];
 			if (!availableCountries.contains(country) && !currentCountries.contains(country)) {
 				availableCountries.add(country);
-				availableOverlays.add(overlays[country]);
 			}
 		}
+	}
+
+	removeCountry(String countryCode) {
+		if (currentCountries.contains(countryCode)) {
+			currentCountries.remove(countryCode);
+		}
+
+		availableCountries.clear();
+
+		currentCountries.forEach((country) {
+			List<String> borderingCountries = borders[country];
+
+			for (num i = 0; i < borderingCountries.length; i++) {
+				String country = borderingCountries[i];
+				if (!availableCountries.contains(country) && !currentCountries.contains(country)) {
+					availableCountries.add(country);
+				}
+			}
+		});
 	}
 
 	render(CanvasRenderingContext2D context, Army army, Texture spritesheet, Map textureRects) {
@@ -200,6 +217,17 @@ class Atlas {
 
 		context.drawImageToRect(visibleMap.image, destination, sourceRect: source);
 
+		if (army != null) {
+			army.enemies.forEach((enemy, attacking) {
+				Map<String, num> overlay = overlays[enemy];
+
+				Rectangle overlaySource = new Rectangle(overlay["sourceX"], overlay["sourceY"], overlay["width"], overlay["height"]);
+				Rectangle overlayDestination = new Rectangle(overlay["destX"] - offset.x, overlay["destY"] - offset.y, overlay["width"], overlay["height"]);
+
+				context.drawImageToRect(enemyOverlays.image, overlayDestination, sourceRect: overlaySource);
+			});
+		}
+
 		if(tempTarget != null) {
 			availableCountries.forEach((country) {
 				if(fromCountry != null && borders[fromCountry].contains(country)) {
@@ -215,21 +243,14 @@ class Atlas {
 			});
 		}
 
-		currentOverlays.forEach((overlay) {
+		currentCountries.forEach((country) {
+			Map<String, num> overlay = overlays[country];
+
 			Rectangle overlaySource = new Rectangle(overlay["sourceX"], overlay["sourceY"], overlay["width"], overlay["height"]);
 			Rectangle overlayDestination = new Rectangle(overlay["destX"] - offset.x, overlay["destY"] - offset.y, overlay["width"], overlay["height"]);
 
 			context.drawImageToRect(countryOverlays.image, overlayDestination, sourceRect: overlaySource);
 		});
-
-		if (army != null) {
-			army.enemyOverlays.forEach((overlay) {
-				Rectangle overlaySource = new Rectangle(overlay["sourceX"], overlay["sourceY"], overlay["width"], overlay["height"]);
-				Rectangle overlayDestination = new Rectangle(overlay["destX"] - offset.x, overlay["destY"] - offset.y, overlay["width"], overlay["height"]);
-
-				context.drawImageToRect(enemyOverlays.image, overlayDestination, sourceRect: overlaySource);
-			});
-		}
 
 		context.drawImage(outlineMap.image, -offset.x, -offset.y);
 
@@ -271,7 +292,6 @@ class Atlas {
 					y = target.y - offset.y;
 
 					if(slider == null) {
-						print(fromCountry);
 						slider = new Slider(strength[targetCountry], strength[fromCountry] < strength[targetCountry] ? strength[fromCountry] : strength[targetCountry]);
 					}
 
