@@ -148,7 +148,7 @@ draw() {
 
 			if (!utils.withinBox(mouse.x, mouse.y, textureLocations["nextButton"])) {
 				context.globalAlpha = 0.95;
-			} else if (mouse.down) {
+			} else if (mouse.down && !fadeToBlack.fading) {
 				context.globalAlpha = 1;
 				if (!fadeToBlack.fading) fadeToBlack.fade();
 			}
@@ -159,7 +159,7 @@ draw() {
 			if (army.weekRecruits > 0) {
 				if (!utils.withinBox(mouse.x, mouse.y, textureLocations["recruitButton"])) {
 					context.globalAlpha = 0.95;
-				} else if (mouse.down) {
+				} else if (mouse.down && !fadeToBlack.fading) {
 					if (!interviewTransition.fading) interviewTransition.fade();
 				}
 
