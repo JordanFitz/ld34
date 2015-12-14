@@ -208,7 +208,7 @@ init() {
 				if (atlas.slider != null && atlas.slider.rect != null && utils.withinBox(downX, downY, atlas.slider.rect)) {
 					num dx = downX;
 
-					mouseMoveStream = canvas.onMouseMove.listen((e) {
+					StreamSubscription sliderStream = canvas.onMouseMove.listen((e) {
 						num moveX = e.offset.x;
 						num difference = moveX - dx;
 
@@ -219,7 +219,7 @@ init() {
 					});
 
 					window.onMouseUp.listen((e) {
-						mouseMoveStream.cancel();
+						sliderStream.cancel();
 					});
 				}
 

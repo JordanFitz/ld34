@@ -77,10 +77,14 @@ class Army {
 				Atlas.strength[atlas.fromCountry] -= currentStrength;
 
 				strength += (enemyStrength / 2).floor();
+				food += ((enemyStrength / 4) * (1 + new Random().nextInt(5))).floor();
 			}
-		}
 
-		List<String> otherCountries = new List<String>();
+			atlas.from = null;
+			atlas.fromCountry = null;
+			atlas.target = null;
+			atlas.targetCountry = null;
+		}
 
 		Atlas.countryNames.forEach((String countryCode, String countryName) {
 			if(!atlas.currentCountries.contains(countryCode)) {
@@ -88,13 +92,21 @@ class Army {
 			}
 		});
 
+		List<String> otherCountries = new List<String>();
 		atlas.availableCountries.forEach((borderingCountry) {
-
+			otherCountries.add(borderingCountry);
 		});
 
-		atlas.from = null;
-		atlas.fromCountry = null;
-		atlas.target = null;
-		atlas.targetCountry = null;
+		String randomEnemy = otherCountries[new Random().nextInt(otherCountries.length)];
+
+		List<String> possibleCountries = new List<String>();
+		Atlas.borders[randomEnemy].forEach((borderingCountry) {
+			possibleCountries.add(borderingCountry);
+		});
+
+		String randomCountry = possibleCountries[new Random().nextInt(possibleCountries.length)];
+
+		enemies[randomEnemy] = randomCountry;
+		enemyOverlays.add(Atlas.overlays[randomEnemy]);
 	}
 }

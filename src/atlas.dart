@@ -202,7 +202,7 @@ class Atlas {
 
 		if(tempTarget != null) {
 			availableCountries.forEach((country) {
-				if(borders[fromCountry].contains(country)) {
+				if(fromCountry != null && borders[fromCountry].contains(country)) {
 					Map<String, num> overlay = overlays[country];
 
 					Rectangle overlaySource = new Rectangle(overlay["sourceX"], overlay["sourceY"], overlay["width"], overlay["height"]);

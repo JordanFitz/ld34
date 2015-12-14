@@ -26,15 +26,15 @@ class Slider {
 	}
 
 	num getValue() {
-		if (value > max) value = max;
 		if (value < 1) value = 1;
+		if (value > max) value = max;
 
 		return value.floor();
 	}
 
 	render(CanvasRenderingContext2D context, Texture spritesheet, Map<String, Rectangle> textureRects, num startX, num y) {
-		if (value > max) value = max;
 		if (value < 1) value = 1;
+		if (value > max) value = max;
 
 		num width = textureRects["slider"].width;
 		num height = textureRects["slider"].height;
