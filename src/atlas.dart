@@ -295,5 +295,9 @@ class Atlas {
 				arrowsRotation += 0.01;
 			}
 		}
+
+		if(army != null) {
+			utils.drawTextWithShadow(context, "Total strength: ${army.strength}", 20, 20, "Propaganda", 30, false);
+		}
 	}
 }

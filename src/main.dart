@@ -113,11 +113,13 @@ draw() {
 
 		if (country != null && (atlas.slider == null || atlas.slider.rect == null || !utils.withinBox(mouse.x, mouse.y, atlas.slider.rect))) {
 			if(army != null && army.defense[countryCode] != null) {
-				utils.drawText(context, "[${army.defense[countryCode]}] $country", mouse.x + 1, mouse.y - 39, "Propaganda", 20, "rgba(255,255,255,0.6)", true);
-				utils.drawText(context, "[${army.defense[countryCode]}] $country", mouse.x, mouse.y - 40, "Propaganda", 20, "rgba(0,0,0,0.9)", true);
+//				utils.drawText(context, "[${army.defense[countryCode]}] $country", mouse.x + 1, mouse.y - 39, "Propaganda", 20, "rgba(255,255,255,0.6)", true);
+//				utils.drawText(context, "[${army.defense[countryCode]}] $country", mouse.x, mouse.y - 40, "Propaganda", 20, "rgba(0,0,0,0.9)", true);
+				utils.drawTextWithShadow(context, "[${army.defense[countryCode]}] $country", mouse.x, mouse.y - 40, "Propaganda", 25, true);
 			} else {
-				utils.drawText(context, "$country", mouse.x + 1, mouse.y - 39, "Propaganda", 20, "rgba(255,255,255,0.6)", true);
-				utils.drawText(context, country, mouse.x, mouse.y - 40, "Propaganda", 20, "rgba(0,0,0,0.9)", true);
+//				utils.drawText(context, "$country", mouse.x + 1, mouse.y - 39, "Propaganda", 20, "rgba(255,255,255,0.6)", true);
+//				utils.drawText(context, country, mouse.x, mouse.y - 40, "Propaganda", 20, "rgba(0,0,0,0.9)", true);
+				utils.drawTextWithShadow(context, country, mouse.x, mouse.y - 40, "Propaganda", 25, true);
 			}
 		}
 	} else if (gameState == GameState.INTERVIEW) {

@@ -23,7 +23,7 @@ class Army {
 
 		gold = 80;
 		food = 100;
-		strength = atlas.availableCountries.length * (2 + random.nextInt(4));
+		strength = atlas.availableCountries.length * (1 + random.nextInt(2));
 
 		List<String> otherCountries = new List<String>();
 
