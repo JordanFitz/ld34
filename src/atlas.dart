@@ -124,6 +124,7 @@ class Atlas {
 	Point tempTarget = null;
 
 	String targetCountry = null;
+	String fromCountry = null;
 
 	Slider slider;
 
@@ -163,10 +164,6 @@ class Atlas {
 	}
 
 	addCountry(String countryCode) {
-		if (strength.containsKey(baseCountry)) {
-			strength.remove(baseCountry);
-		}
-
 		if (availableCountries.contains(countryCode)) {
 			availableCountries.remove(countryCode);
 		}
@@ -175,8 +172,6 @@ class Atlas {
 			currentCountries.add(countryCode);
 			currentOverlays.add(overlays[countryCode]);
 		}
-
-		print(countryCode);
 
 		List<String> borderingCountries = borders[countryCode];
 
@@ -206,13 +201,17 @@ class Atlas {
 		context.drawImageToRect(visibleMap.image, destination, sourceRect: source);
 
 		if(tempTarget != null) {
-			availableOverlays.forEach((overlay) {
-				Rectangle overlaySource = new Rectangle(overlay["sourceX"], overlay["sourceY"], overlay["width"], overlay["height"]);
-				Rectangle overlayDestination = new Rectangle(overlay["destX"] - offset.x, overlay["destY"] - offset.y, overlay["width"], overlay["height"]);
+			availableCountries.forEach((country) {
+				if(borders[fromCountry].contains(country)) {
+					Map<String, num> overlay = overlays[country];
 
-				context.globalAlpha = 0.3;
-				context.drawImageToRect(countryOverlays.image, overlayDestination, sourceRect: overlaySource);
-				context.globalAlpha = 1;
+					Rectangle overlaySource = new Rectangle(overlay["sourceX"], overlay["sourceY"], overlay["width"], overlay["height"]);
+					Rectangle overlayDestination = new Rectangle(overlay["destX"] - offset.x, overlay["destY"] - offset.y, overlay["width"], overlay["height"]);
+
+					context.globalAlpha = 0.3;
+					context.drawImageToRect(countryOverlays.image, overlayDestination, sourceRect: overlaySource);
+					context.globalAlpha = 1;
+				}
 			});
 		}
 
@@ -272,7 +271,8 @@ class Atlas {
 					y = target.y - offset.y;
 
 					if(slider == null) {
-						slider = new Slider(strength[targetCountry], army.strength < strength[targetCountry] ? army.strength : strength[targetCountry]);
+						print(fromCountry);
+						slider = new Slider(strength[targetCountry], strength[fromCountry] < strength[targetCountry] ? strength[fromCountry] : strength[targetCountry]);
 					}
 
 					slider.render(context, spritesheet, textureRects, x, y - 70);

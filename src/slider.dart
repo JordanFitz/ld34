@@ -27,18 +27,20 @@ class Slider {
 
 	num getValue() {
 		if (value > max) value = max;
-		if (value < 0) value = 0;
+		if (value < 1) value = 1;
 
-		return value.round();
+		return value.floor();
 	}
 
 	render(CanvasRenderingContext2D context, Texture spritesheet, Map<String, Rectangle> textureRects, num startX, num y) {
 		if (value > max) value = max;
-		if (value < 0) value = 0;
+		if (value < 1) value = 1;
 
 		num width = textureRects["slider"].width;
 		num height = textureRects["slider"].height;
+
 		num x = startX - width / 2;
+
 		sliderX = x;
 		sliderWidth = width;
 
@@ -55,7 +57,7 @@ class Slider {
 
 		utils.drawTextWithShadow(context, "${value.floor()}", handleX, y - 32, "Propaganda", 20, true);
 
-		utils.drawTextWithShadow(context, "0", x - 28, y + 2, "Propaganda", 20, false);
-		utils.drawTextWithShadow(context, "$high", x + width + 16, y + 2, "Propaganda", 20, false, color: max < high ? "#993638" : "#fff");
+		utils.drawTextWithShadow(context, "0", x - 28, y + 1, "Propaganda", 20, false);
+		utils.drawTextWithShadow(context, "$high", x + width + 16, y + 1, "Propaganda", 20, false, color: max < high ? "#993638" : "#fff");
 	}
 }

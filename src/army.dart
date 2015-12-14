@@ -1,6 +1,8 @@
+import "dart:math";
+
 import "applicant.dart";
 import "atlas.dart";
-import "dart:math";
+import "utils.dart" as utils;
 
 class Army {
 	num gold;
@@ -24,6 +26,10 @@ class Army {
 		gold = 80;
 		food = 100;
 		strength = 6 + atlas.availableCountries.length * (1 + random.nextInt(2));
+
+		Atlas.strength[country] = strength;
+
+		print(Atlas.strength.toString());
 
 		List<String> otherCountries = new List<String>();
 
@@ -58,8 +64,37 @@ class Army {
 			food -= man.requiredFood;
 		});
 
+		if (atlas.target != null) {
+			num currentStrength = atlas.slider.getValue();
+			num enemyStrength = Atlas.strength[atlas.targetCountry];
+
+			num d = new Random().nextDouble();
+
+			if (currentStrength / enemyStrength > d) {
+				atlas.addCountry(atlas.targetCountry);
+
+				Atlas.strength[atlas.targetCountry] = (enemyStrength / 2).floor() + currentStrength;
+				Atlas.strength[atlas.fromCountry] -= currentStrength;
+
+				strength += (enemyStrength / 2).floor();
+			}
+		}
+
+		List<String> otherCountries = new List<String>();
+
+		Atlas.countryNames.forEach((String countryCode, String countryName) {
+			if(!atlas.currentCountries.contains(countryCode)) {
+				Atlas.strength[countryCode] += 8;
+			}
+		});
+
 		atlas.availableCountries.forEach((borderingCountry) {
 
 		});
+
+		atlas.from = null;
+		atlas.fromCountry = null;
+		atlas.target = null;
+		atlas.targetCountry = null;
 	}
 }

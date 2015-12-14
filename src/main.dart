@@ -112,8 +112,8 @@ draw() {
 		String country = Atlas.countryNames[countryCode];
 
 		if (country != null && (atlas.slider == null || atlas.slider.rect == null || !utils.withinBox(mouse.x, mouse.y, atlas.slider.rect)) /*&& atlas.baseCountry == null*/) {
-			if(army != null && army.defense[countryCode] != null) {
-				utils.drawTextWithShadow(context, "[${army.defense[countryCode]}] $country", mouse.x, mouse.y - 40, "Propaganda", 25, true);
+			if(army != null && atlas.currentCountries.contains(countryCode)) {
+				utils.drawTextWithShadow(context, "[${Atlas.strength[countryCode]}] $country", mouse.x, mouse.y - 40, "Propaganda", 25, true);
 			} else {
 				utils.drawTextWithShadow(context, country, mouse.x, mouse.y - 40, "Propaganda", 25, true);
 			}
@@ -172,6 +172,10 @@ init() {
 	window.onKeyUp.listen((e) {
 		if(keys.containsKey(keycodes["r"])) {
 			applicant.randomize();
+
+			if (gameState == GameState.MAP) {
+				army.progress();
+			}
 		}
 
 		keys.remove(e.keyCode);
@@ -216,21 +220,23 @@ init() {
 
 					window.onMouseUp.listen((e) {
 						mouseMoveStream.cancel();
-
-
 					});
 				}
 
-				if (atlas.currentCountries.contains(countryCode) && atlas.target == null) atlas.from = new Point(downX + atlas.offset.x, downY + atlas.offset.y);
+				if (atlas.currentCountries.contains(countryCode) && atlas.target == null) {
+					atlas.from = new Point(downX + atlas.offset.x, downY + atlas.offset.y);
+					atlas.fromCountry = countryCode;
+				}
 
 				if (atlas.targetCountry == countryCode || atlas.currentCountries.contains(countryCode)) { // the player has taken over the country they clicked on
 					if (atlas.target != null) {
 						num targetX = atlas.target.x - atlas.offset.x;
 						num targetY = atlas.target.y - atlas.offset.y;
 
-						if (!utils.within(downX, downY, targetX - 7, targetY - 7, 14, 14)) return;
+						if (!utils.within(downX, downY, targetX - 10, targetY - 10, 20, 20)) return;
 
 						atlas.target = null;
+						atlas.targetCountry = null;
 					}
 
 					if (!atlas.currentCountries.contains(countryCode)) atlas.tempTarget = new Point(downX, downY);
