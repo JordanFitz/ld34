@@ -17,10 +17,11 @@ class FadeToBlack {
 
 	fade() {
 		fading = true;
-		if (finished) finished = false;
 	}
 
 	update(delta) {
+		if (finished) finished = false;
+
 		if (fading && direction == 1) {
 			opacity += 0.001 * delta;
 

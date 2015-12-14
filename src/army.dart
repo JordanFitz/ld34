@@ -17,6 +17,7 @@ class Army {
 	String country;
 
 	Map<String, num> defense = new Map<String, num>();
+	List events = new List<String>();
 
 	Atlas atlas;
 
@@ -90,7 +91,7 @@ class Army {
 				strength += (enemyStrength / 2).floor();
 				food += ((enemyStrength / 4) * (1 + new Random().nextInt(5))).floor();
 
-				print("${atlas.targetCountry} lost to ${atlas.fromCountry}!");
+				events.add("${Atlas.countryNames[atlas.targetCountry]} was captured by ${Atlas.countryNames[atlas.fromCountry]}!");
 			}
 
 			atlas.from = null;
@@ -128,7 +129,7 @@ class Army {
 
 					generateEnemy = false;
 
-					print("${possibleAttackers[randomAttacker]} lost to $randomAttacker!");
+					events.add("Ally ${Atlas.countryNames[randomAttacker]} has deafated ${Atlas.countryNames[possibleAttackers[randomAttacker]]}!");
 				}
 			}
 		}
@@ -154,8 +155,11 @@ class Army {
 
 			String randomCountry = possibleCountries[new Random().nextInt(possibleCountries.length)];
 
-			enemies[randomEnemy] = randomCountry;
-			enemyOverlays.add(Atlas.overlays[randomEnemy]);
+			if(!enemies.containsKey(randomEnemy)) {
+				enemies[randomEnemy] = randomCountry;
+				enemyOverlays.add(Atlas.overlays[randomEnemy]);
+				events.add("${Atlas.countryNames[randomEnemy]} has joined the allies!");
+			}
 		}
 	}
 }

@@ -71,8 +71,11 @@ update(num d) {
 	}
 
 	if(gameState == GameState.MAP && !fadeToBlack.fading) {
-		if(fadeToBlack.finished) {
-			gameState == GameState.NEWS;
+		if(fadeToBlack.finished && fadeToBlack.direction == 0) {
+			army.progress();
+			gameState = GameState.NEWS;
+		} else if (fadeToBlack.finished && fadeToBlack.direction == 1) {
+			army.events.clear();
 		} else {
 			if(keys.containsKey(keycodes["w"]) || mouse.y < 200) {
 				atlas.offset += new Point(0, -0.3 * delta);
@@ -135,6 +138,8 @@ draw() {
 				utils.drawTextWithShadow(context, "$strength", position.x, position.y, "Propaganda", 20, true);
 			}
 		});*/
+
+		fadeToBlack.render(context, WIDTH, HEIGHT);
 	} else if (gameState == GameState.INTERVIEW) {
 		utils.drawRect(context, 0, 0, WIDTH, HEIGHT, "#4D4D4D");
 
@@ -166,9 +171,22 @@ draw() {
 		context.drawImageToRect(textures["spritesheet"].image, textureLocations["denyButton"], sourceRect: textureRects["denyButton"]);
 
 		context.globalAlpha = 1;
-	}
+	} else if (gameState == GameState.NEWS) {
+		utils.drawRect(context, 0, 0, WIDTH, HEIGHT, "#000");
 
-	fadeToBlack.render(context, WIDTH, HEIGHT);
+		num i = 0;
+		army.events.forEach((event) {
+			utils.drawTextWithShadow(context, event, 20, 20 + (i * 35), "Propaganda", 35, false);
+			i++;
+		});
+
+		utils.drawTextWithShadow(context, "Continue", WIDTH - 150, HEIGHT - 50, "Propaganda", 35, false);
+
+		if (mouse.down && utils.within(mouse.x, mouse.y, WIDTH - 150, HEIGHT - 50, 120, 20)) {
+			gameState = GameState.MAP;
+			fadeToBlack.fade();
+		}
+	}
 }
 
 tick(num delta) {
@@ -191,7 +209,6 @@ init() {
 			applicant.randomize();
 
 			if (gameState == GameState.MAP) {
-				army.progress();
 				fadeToBlack.fade();
 			}
 		}

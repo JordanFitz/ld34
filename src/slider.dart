@@ -50,7 +50,7 @@ class Slider {
 
 		context.drawImageToRect(spritesheet.image, destination, sourceRect: textureRects["slider"]);
 
-		if(height != 0) {
+		if(high != 0) {
 			num ratio = value / high;
 			handleX = x + (width * ratio);
 		} else {
