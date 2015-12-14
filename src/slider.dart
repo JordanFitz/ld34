@@ -36,6 +36,8 @@ class Slider {
 		if (value < 1) value = 1;
 		if (value > max) value = max;
 
+		print("$value $max $high");
+
 		num width = textureRects["slider"].width;
 		num height = textureRects["slider"].height;
 
@@ -48,8 +50,12 @@ class Slider {
 
 		context.drawImageToRect(spritesheet.image, destination, sourceRect: textureRects["slider"]);
 
-		num ratio = value / high;
-		handleX = x + (width * ratio);
+		if(height != 0) {
+			num ratio = value / high;
+			handleX = x + (width * ratio);
+		} else {
+			handleX = x;
+		}
 
 		destination = new Rectangle(handleX - textureRects["sliderHandle"].width / 2, y - 10, textureRects["sliderHandle"].width, textureRects["sliderHandle"].height);
 		rect = destination;

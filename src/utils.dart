@@ -85,3 +85,7 @@ num chance(num d, num variations) {
 		result--;
 	}
 }
+
+Point center(Rectangle rect) {
+	return new Point(rect.left + rect.width / 2, rect.top + rect.height / 2);
+}

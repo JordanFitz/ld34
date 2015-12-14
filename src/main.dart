@@ -7,6 +7,7 @@ import "texture.dart";
 import "applicant.dart";
 import "atlas.dart";
 import "army.dart";
+import "fadetoblack.dart";
 
 CanvasElement canvas = querySelector("canvas#canvas");
 CanvasRenderingContext2D context = canvas.context2D;
@@ -18,7 +19,7 @@ num backgroundOpacity = 0.0;
 bool backgroundDirection = false;
 
 enum GameState {
-	MENU, MAP, INTERVIEW
+	MENU, MAP, INTERVIEW, NEWS
 }
 
 GameState gameState = GameState.MAP;
@@ -46,6 +47,8 @@ Applicant applicant = new Applicant();
 Atlas atlas = new Atlas(WIDTH, HEIGHT);
 Army army;
 
+FadeToBlack fadeToBlack = new FadeToBlack();
+
 update(num d) {
 	num delta = d - lastDelta;
 
@@ -67,23 +70,29 @@ update(num d) {
 		gameState = GameState.MAP;
 	}
 
-	if(gameState == GameState.MAP) {
-		if(keys.containsKey(keycodes["w"]) || mouse.y < 200) {
-			atlas.offset += new Point(0, -0.3 * delta);
-		}
+	if(gameState == GameState.MAP && !fadeToBlack.fading) {
+		if(fadeToBlack.finished) {
+			gameState == GameState.NEWS;
+		} else {
+			if(keys.containsKey(keycodes["w"]) || mouse.y < 200) {
+				atlas.offset += new Point(0, -0.3 * delta);
+			}
 
-		if(keys.containsKey(keycodes["s"]) || mouse.y > HEIGHT - 200) {
-			atlas.offset += new Point(0, 0.3 * delta);
-		}
+			if(keys.containsKey(keycodes["s"]) || mouse.y > HEIGHT - 200) {
+				atlas.offset += new Point(0, 0.3 * delta);
+			}
 
-		if(keys.containsKey(keycodes["a"]) || mouse.x < 200) {
-			atlas.offset += new Point(-0.3 * delta, 0);
-		}
+			if(keys.containsKey(keycodes["a"]) || mouse.x < 200) {
+				atlas.offset += new Point(-0.3 * delta, 0);
+			}
 
-		if(keys.containsKey(keycodes["d"]) || mouse.x > WIDTH - 200) {
-			atlas.offset += new Point(0.3 * delta, 0);
+			if(keys.containsKey(keycodes["d"]) || mouse.x > WIDTH - 200) {
+				atlas.offset += new Point(0.3 * delta, 0);
+			}
 		}
 	}
+
+	fadeToBlack.update(delta);
 
 	lastDelta = d;
 }
@@ -118,6 +127,14 @@ draw() {
 				utils.drawTextWithShadow(context, country, mouse.x, mouse.y - 40, "Propaganda", 25, true);
 			}
 		}
+
+		/* FOR DEBUGGING
+		Atlas.strength.forEach((String country, num strength) {
+			if(Atlas.overlays[country] != null) {
+				Point position = utils.center(new Rectangle(Atlas.overlays[country]["destX"] - atlas.offset.x, Atlas.overlays[country]["destY"] - atlas.offset.y, Atlas.overlays[country]["width"], Atlas.overlays[country]["height"]));
+				utils.drawTextWithShadow(context, "$strength", position.x, position.y, "Propaganda", 20, true);
+			}
+		});*/
 	} else if (gameState == GameState.INTERVIEW) {
 		utils.drawRect(context, 0, 0, WIDTH, HEIGHT, "#4D4D4D");
 
@@ -150,6 +167,8 @@ draw() {
 
 		context.globalAlpha = 1;
 	}
+
+	fadeToBlack.render(context, WIDTH, HEIGHT);
 }
 
 tick(num delta) {
@@ -173,6 +192,7 @@ init() {
 
 			if (gameState == GameState.MAP) {
 				army.progress();
+				fadeToBlack.fade();
 			}
 		}
 
@@ -202,6 +222,7 @@ init() {
 			atlas.addCountry(countryCode);
 			army = new Army(countryCode, atlas);
 		} else {
+			print(atlas.baseCountry);
 			if (gameState == GameState.MAP && atlas.baseCountry != null && e.which == 1) {
 				if (atlas.slider != null && atlas.slider.rect != null && utils.withinBox(downX, downY, atlas.slider.rect)) {
 					num dx = downX;

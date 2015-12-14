@@ -74,6 +74,7 @@ class Army {
 		});
 
 		String target = atlas.targetCountry;
+		String from = atlas.fromCountry;
 
 		if (atlas.target != null) {
 			num currentStrength = atlas.slider.getValue();
@@ -103,7 +104,7 @@ class Army {
 
 		enemies.forEach((attacker, attacking) {
 			atlas.currentCountries.forEach((currentCountry) {
-				if(Atlas.borders[attacker].contains(currentCountry) && currentCountry != target) {
+				if(Atlas.borders[attacker].contains(currentCountry) && currentCountry != target && currentCountry != from) {
 					possibleAttackers[attacker] = currentCountry;
 					possibleAttackerCountries.add(attacker);
 				}
@@ -117,15 +118,9 @@ class Army {
 
 			num randomPercentage = new Random().nextDouble();
 
-			if(randomPercentage < 0.76) {
+			if(randomPercentage < 0.5) {
 				if(attack(Atlas.strength[randomAttacker], possibleAttackers[randomAttacker])) {
 					strength -= Atlas.strength[possibleAttackers[randomAttacker]];
-
-					print(Atlas.strength[possibleAttackers[randomAttacker]]);
-
-					if (Atlas.strength[possibleAttackers[randomAttacker]] == 0) {
-						Atlas.strength[possibleAttackers[randomAttacker]] = 1;
-					}
 
 					atlas.removeCountry(possibleAttackers[randomAttacker]);
 
