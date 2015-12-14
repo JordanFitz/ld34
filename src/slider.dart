@@ -36,7 +36,7 @@ class Slider {
 		if (value < 1) value = 1;
 		if (value > max) value = max;
 
-		print("$value $max $high");
+//		print("$value $max $high");
 
 		num width = textureRects["slider"].width;
 		num height = textureRects["slider"].height;

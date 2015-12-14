@@ -62,6 +62,12 @@ class Army {
 		num enemyStrength = Atlas.strength[attacking];
 		num d = new Random().nextDouble();
 
+//		print("$enemyStrength $currentStrength");
+
+		if (enemyStrength == 0) {
+			return true;
+		}
+
 		if (currentStrength / enemyStrength > d) {
 			return true;
 		}
@@ -105,7 +111,7 @@ class Army {
 
 		enemies.forEach((attacker, attacking) {
 			atlas.currentCountries.forEach((currentCountry) {
-				if(Atlas.borders[attacker].contains(currentCountry) && currentCountry != target && currentCountry != from) {
+				if(Atlas.borders[attacker].contains(currentCountry) && currentCountry != target) {
 					possibleAttackers[attacker] = currentCountry;
 					possibleAttackerCountries.add(attacker);
 				}

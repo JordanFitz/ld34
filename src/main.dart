@@ -239,7 +239,6 @@ init() {
 			atlas.addCountry(countryCode);
 			army = new Army(countryCode, atlas);
 		} else {
-			print(atlas.baseCountry);
 			if (gameState == GameState.MAP && atlas.baseCountry != null && e.which == 1) {
 				if (atlas.slider != null && atlas.slider.rect != null && utils.withinBox(downX, downY, atlas.slider.rect)) {
 					num dx = downX;
@@ -289,12 +288,15 @@ init() {
 					window.onMouseUp.listen((e) {
 						mouseMoveStream.cancel();
 
-						if (atlas.tempTarget != null && (atlas.availableCountries.contains(countryCode) || atlas.currentCountries.contains(countryCode))) {
+						if (atlas.tempTarget != null && atlas.currentCountries.contains(atlas.fromCountry)) {
 							atlas.tempTarget = null;
 
 							String target = atlas.getCountry(e.offset.x, e.offset.y);
 
-							if (mouseMoved == true && target != null && !atlas.currentCountries.contains(target) && atlas.availableCountries.contains(target)) {
+							print(Atlas.borders[atlas.fromCountry].toString());
+							print(atlas.fromCountry);
+
+							if (target != null && Atlas.borders[atlas.fromCountry].contains(target) && atlas.availableCountries.contains(target)) {
 								atlas.target = new Point(e.offset.x + atlas.offset.x, e.offset.y + atlas.offset.y);
 								atlas.targetCountry = target;
 							}
