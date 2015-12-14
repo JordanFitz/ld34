@@ -19,6 +19,8 @@ class Army {
 	Map<String, num> defense = new Map<String, num>();
 	List events = new List<String>();
 
+	num week = 0;
+
 	Atlas atlas;
 
 	Army(this.country, this.atlas) {
@@ -98,12 +100,24 @@ class Army {
 				food += ((enemyStrength / 4) * (1 + new Random().nextInt(5))).floor();
 
 				events.add("${Atlas.countryNames[atlas.targetCountry]} was captured by ${Atlas.countryNames[atlas.fromCountry]}!");
+			} else {
+				events.add("${Atlas.countryNames[atlas.targetCountry]} failed to capture ${Atlas.countryNames[atlas.fromCountry]}.");
 			}
 
 			atlas.from = null;
 			atlas.fromCountry = null;
 			atlas.target = null;
 			atlas.targetCountry = null;
+		} else if (atlas.defenseTarget != null) {
+			Atlas.strength[atlas.defenseFromCountry] -= atlas.defenseSlider.getValue();
+			Atlas.strength[atlas.defenseTargetCountry] += atlas.defenseSlider.getValue();
+
+			events.add("${Atlas.countryNames[atlas.defenseFromCountry]} reinforced ${Atlas.countryNames[atlas.defenseTargetCountry]}.");
+
+			atlas.defenseFrom = null;
+			atlas.defenseFromCountry = null;
+			atlas.defenseTarget = null;
+			atlas.defenseTargetCountry = null;
 		}
 
 		Map possibleAttackers = new Map<String, String>();
@@ -143,6 +157,8 @@ class Army {
 					generateEnemy = false;
 
 					events.add("Ally ${Atlas.countryNames[randomAttacker]} has deafated ${Atlas.countryNames[possibleAttackers[randomAttacker]]}!");
+				} else {
+					events.add("Ally ${Atlas.countryNames[randomAttacker]} failed to deafat ${Atlas.countryNames[possibleAttackers[randomAttacker]]}!");
 				}
 			}
 		}
@@ -171,8 +187,10 @@ class Army {
 			if(!enemies.containsKey(randomEnemy)) {
 				enemies[randomEnemy] = randomCountry;
 				enemyOverlays.add(Atlas.overlays[randomEnemy]);
-				events.add("${Atlas.countryNames[randomEnemy]} has joined the allies!");
+				events.add("${Atlas.countryNames[randomEnemy]} has joined the allies.");
 			}
+
+			week++;
 		}
 	}
 }

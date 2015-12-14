@@ -125,7 +125,15 @@ class Atlas {
 	String targetCountry = null;
 	String fromCountry = null;
 
+	Point defenseFrom = null;
+	Point defenseTarget = null;
+	Point defenseTempTarget = null;
+
+	String defenseTargetCountry = null;
+	String defenseFromCountry = null;
+
 	Slider slider;
+	Slider defenseSlider;
 
 	num arrowsRotation = 0;
 
@@ -314,6 +322,47 @@ class Atlas {
 
 				arrowsRotation += 0.01;
 			}
+		}
+
+		if (defenseFrom != null) {
+			context.strokeStyle = "#000";
+			context.lineWidth = 5;
+
+			context.beginPath();
+			context.moveTo(defenseFrom.x - offset.x, defenseFrom.y - offset.y);
+
+			num x;
+			num y;
+
+			if(defenseTempTarget != null) {
+				x = defenseTempTarget.x;
+				y = defenseTempTarget.y;
+
+				context.lineTo(x, y);
+				defenseSlider = null;
+			} else if (defenseTarget != null) {
+				x = defenseTarget.x - offset.x;
+				y = defenseTarget.y - offset.y;
+
+				context.lineTo(x, y);
+
+				if (defenseSlider == null) {
+					defenseSlider = new Slider(strength[defenseFromCountry], strength[defenseFromCountry]);
+				} else {
+					defenseSlider.render(context, spritesheet, textureRects, x, y - 50);
+				}
+			} else {
+				x = -999;
+				y = -999;
+			}
+
+			context.setLineDash([12, 12]);
+			context.stroke();
+
+			num arrowsWidth = textureRects["smallArrows"].width / 2;
+			num arrowsHeight = textureRects["smallArrows"].height / 2;
+
+			context.drawImageToRect(spritesheet.image, new Rectangle(x - arrowsWidth / 2, y - arrowsHeight / 2, arrowsWidth, arrowsHeight), sourceRect: textureRects["smallArrows"]);
 		}
 
 		if(army != null) {

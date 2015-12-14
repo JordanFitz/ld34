@@ -71,25 +71,30 @@ update(num d) {
 	}
 
 	if(gameState == GameState.MAP && !fadeToBlack.fading) {
+		Rectangle buttons = new Rectangle(textureLocations["recruitButton"].left,
+				textureLocations["nextButton"].top,
+				textureLocations["nextButton"].width + textureLocations["recruitButton"].width + 40,
+				textureLocations["nextButton"].height);
+
 		if(fadeToBlack.finished && fadeToBlack.direction == 0) {
 			army.progress();
 			gameState = GameState.NEWS;
 		} else if (fadeToBlack.finished && fadeToBlack.direction == 1) {
 			army.events.clear();
-		} else {
-			if(keys.containsKey(keycodes["w"]) || mouse.y < 200) {
+		} else if(!utils.withinBox(mouse.x, mouse.y, buttons)) {
+			if(keys.containsKey(keycodes["w"]) || mouse.y < 100) {
 				atlas.offset += new Point(0, -0.3 * delta);
 			}
 
-			if(keys.containsKey(keycodes["s"]) || mouse.y > HEIGHT - 200) {
+			if(keys.containsKey(keycodes["s"]) || mouse.y > HEIGHT - 100) {
 				atlas.offset += new Point(0, 0.3 * delta);
 			}
 
-			if(keys.containsKey(keycodes["a"]) || mouse.x < 200) {
+			if(keys.containsKey(keycodes["a"]) || mouse.x < 100) {
 				atlas.offset += new Point(-0.3 * delta, 0);
 			}
 
-			if(keys.containsKey(keycodes["d"]) || mouse.x > WIDTH - 200) {
+			if(keys.containsKey(keycodes["d"]) || mouse.x > WIDTH - 100) {
 				atlas.offset += new Point(0.3 * delta, 0);
 			}
 		}
@@ -123,7 +128,9 @@ draw() {
 		String countryCode = atlas.getCountry(mouse.x, mouse.y);
 		String country = Atlas.countryNames[countryCode];
 
-		if (country != null && (atlas.slider == null || atlas.slider.rect == null || !utils.withinBox(mouse.x, mouse.y, atlas.slider.rect)) /*&& atlas.baseCountry == null*/) {
+		if (country != null &&
+				(atlas.slider == null || atlas.slider.rect == null || !utils.withinBox(mouse.x, mouse.y, atlas.slider.rect)) &&
+				(atlas.defenseSlider == null || atlas.defenseSlider.rect == null || !utils.withinBox(mouse.x, mouse.y, atlas.defenseSlider.rect))) {
 			if(army != null && atlas.currentCountries.contains(countryCode)) {
 				utils.drawTextWithShadow(context, "[${Atlas.strength[countryCode]}] $country", mouse.x, mouse.y - 40, "Propaganda", 25, true);
 			} else {
@@ -131,13 +138,25 @@ draw() {
 			}
 		}
 
-		/* FOR DEBUGGING
-		Atlas.strength.forEach((String country, num strength) {
-			if(Atlas.overlays[country] != null) {
-				Point position = utils.center(new Rectangle(Atlas.overlays[country]["destX"] - atlas.offset.x, Atlas.overlays[country]["destY"] - atlas.offset.y, Atlas.overlays[country]["width"], Atlas.overlays[country]["height"]));
-				utils.drawTextWithShadow(context, "$strength", position.x, position.y, "Propaganda", 20, true);
+		if(atlas.baseCountry != null) {
+			context.globalAlpha = 1;
+
+			if(!utils.withinBox(mouse.x, mouse.y, textureLocations["nextButton"])) {
+				context.globalAlpha = 0.95;
+			} else if (mouse.down) {
+				context.globalAlpha = 1;
+				if (!fadeToBlack.fading) fadeToBlack.fade();
 			}
-		});*/
+
+			context.drawImageToRect(textures["spritesheet"].image, textureLocations["nextButton"], sourceRect: textureRects["nextButton"]);
+
+			context.globalAlpha = 1;
+
+			if(!utils.withinBox(mouse.x, mouse.y, textureLocations["recruitButton"])) context.globalAlpha = 0.95;
+			context.drawImageToRect(textures["spritesheet"].image, textureLocations["recruitButton"], sourceRect: textureRects["recruitButton"]);
+
+			context.globalAlpha = 1;
+		}
 
 		fadeToBlack.render(context, WIDTH, HEIGHT);
 	} else if (gameState == GameState.INTERVIEW) {
@@ -174,9 +193,11 @@ draw() {
 	} else if (gameState == GameState.NEWS) {
 		utils.drawRect(context, 0, 0, WIDTH, HEIGHT, "#000");
 
+		utils.drawTextWithShadow(context, "Week ${army.week}", 20, 20, "Propaganda", 37, false);
+
 		num i = 0;
 		army.events.forEach((event) {
-			utils.drawTextWithShadow(context, event, 20, 20 + (i * 35), "Propaganda", 35, false);
+			utils.drawTextWithShadow(context, event, 20, 65 + (i * 35), "Propaganda", 35, false);
 			i++;
 		});
 
@@ -207,10 +228,6 @@ init() {
 	window.onKeyUp.listen((e) {
 		if(keys.containsKey(keycodes["r"])) {
 			applicant.randomize();
-
-			if (gameState == GameState.MAP) {
-				fadeToBlack.fade();
-			}
 		}
 
 		keys.remove(e.keyCode);
@@ -238,71 +255,140 @@ init() {
 			atlas.baseCountry = countryCode;
 			atlas.addCountry(countryCode);
 			army = new Army(countryCode, atlas);
-		} else {
-			if (gameState == GameState.MAP && atlas.baseCountry != null && e.which == 1) {
-				if (atlas.slider != null && atlas.slider.rect != null && utils.withinBox(downX, downY, atlas.slider.rect)) {
-					num dx = downX;
+		} else if (gameState == GameState.MAP && atlas.baseCountry != null && e.which == 1 && (atlas.defenseTarget == null && atlas.defenseTempTarget == null)) {
+			if (atlas.slider != null && atlas.slider.rect != null && utils.withinBox(downX, downY, atlas.slider.rect)) {
+				num dx = downX;
 
-					StreamSubscription sliderStream = canvas.onMouseMove.listen((e) {
-						num moveX = e.offset.x;
-						num difference = moveX - dx;
+				StreamSubscription sliderStream = canvas.onMouseMove.listen((e) {
+					num moveX = e.offset.x;
+					num difference = moveX - dx;
 
-						atlas.slider.handleX += difference;
-						atlas.slider.setValue();
+					atlas.slider.handleX += difference;
+					atlas.slider.setValue();
 
-						dx = moveX;
-					});
+					dx = moveX;
+				});
 
-					window.onMouseUp.listen((e) {
-						sliderStream.cancel();
-					});
+				window.onMouseUp.listen((e) {
+					sliderStream.cancel();
+				});
+			}
+
+			if (atlas.currentCountries.contains(countryCode) && atlas.target == null) {
+				atlas.from = new Point(downX + atlas.offset.x, downY + atlas.offset.y);
+				atlas.fromCountry = countryCode;
+			}
+
+			if (atlas.targetCountry == countryCode || atlas.currentCountries.contains(countryCode)) { // the player has taken over the country they clicked on
+				if (atlas.target != null) {
+					num targetX = atlas.target.x - atlas.offset.x;
+					num targetY = atlas.target.y - atlas.offset.y;
+
+					if (!utils.within(downX, downY, targetX - 10, targetY - 10, 20, 20)) return;
+
+					atlas.target = null;
+					atlas.targetCountry = null;
 				}
 
-				if (atlas.currentCountries.contains(countryCode) && atlas.target == null) {
-					atlas.from = new Point(downX + atlas.offset.x, downY + atlas.offset.y);
-					atlas.fromCountry = countryCode;
-				}
+				if (!atlas.currentCountries.contains(countryCode)) atlas.tempTarget = new Point(downX, downY);
 
-				if (atlas.targetCountry == countryCode || atlas.currentCountries.contains(countryCode)) { // the player has taken over the country they clicked on
-					if (atlas.target != null) {
-						num targetX = atlas.target.x - atlas.offset.x;
-						num targetY = atlas.target.y - atlas.offset.y;
+				mouseMoveStream = canvas.onMouseMove.listen((e) {
+					mouseMoved = true;
 
-						if (!utils.within(downX, downY, targetX - 10, targetY - 10, 20, 20)) return;
+					num moveX = e.offset.x;
+					num moveY = e.offset.y;
 
-						atlas.target = null;
-						atlas.targetCountry = null;
+					atlas.tempTarget = new Point(moveX, moveY);
+				});
+
+				window.onMouseUp.listen((e) {
+					mouseMoveStream.cancel();
+
+					if (atlas.tempTarget != null && atlas.currentCountries.contains(atlas.fromCountry)) {
+						atlas.tempTarget = null;
+
+						String target = atlas.getCountry(e.offset.x, e.offset.y);
+
+						if (target != null && Atlas.borders[atlas.fromCountry].contains(target) && atlas.availableCountries.contains(target)) {
+							atlas.target = new Point(e.offset.x + atlas.offset.x, e.offset.y + atlas.offset.y);
+							atlas.targetCountry = target;
+						} else {
+							atlas.from = null;
+							atlas.fromCountry = null;
+						}
+					}
+				});
+			}
+		} else if (gameState == GameState.MAP && atlas.baseCountry != null && e.which == 3 && (atlas.target == null && atlas.tempTarget == null)) {
+			e.preventDefault();
+
+			if (atlas.currentCountries.contains(countryCode)) {
+				atlas.defenseFrom = new Point(downX + atlas.offset.x, downY + atlas.offset.y);
+				atlas.defenseFromCountry = countryCode;
+
+				StreamSubscription defenseStream = canvas.onMouseMove.listen((e) {
+					num moveX = e.offset.x;
+					num moveY = e.offset.y;
+
+					atlas.defenseTempTarget = new Point(moveX, moveY);
+				});
+
+				window.onMouseUp.listen((e) {
+					defenseStream.cancel();
+
+					if(e.which != 3) return;
+
+					String target = atlas.getCountry(e.offset.x, e.offset.y);
+
+					if (target != null &&
+							atlas.currentCountries.contains(atlas.defenseFromCountry) &&
+							atlas.currentCountries.contains(target) &&
+							atlas.defenseFromCountry != target &&
+							Atlas.borders[atlas.defenseFromCountry].contains(target)) {
+
+						atlas.defenseTarget = new Point(e.offset.x + atlas.offset.x, e.offset.y + atlas.offset.y);
+						atlas.defenseTargetCountry = target;
+					} else if (target != null &&
+							atlas.currentCountries.contains(atlas.defenseFromCountry) &&
+							atlas.currentCountries.contains(target) &&
+							atlas.defenseFromCountry == target) {
+
+						atlas.defenseTarget = null;
+						atlas.defenseTargetCountry = null;
+						atlas.defenseFrom = null;
+						atlas.defenseFromCountry = null;
+					} else {
+						atlas.defenseTarget = null;
+						atlas.defenseTargetCountry = null;
+						atlas.defenseFrom = null;
+						atlas.defenseFromCountry = null;
 					}
 
-					if (!atlas.currentCountries.contains(countryCode)) atlas.tempTarget = new Point(downX, downY);
+					atlas.defenseTempTarget = null;
+				});
+			}
+		} else if (gameState == GameState.MAP && atlas.baseCountry != null && e.which == 1 && (atlas.target == null && atlas.tempTarget == null)) {
+			if (atlas.defenseSlider != null && atlas.defenseSlider.rect != null && utils.withinBox(downX, downY, atlas.defenseSlider.rect)) {
+				num dx = downX;
 
-					mouseMoveStream = canvas.onMouseMove.listen((e) {
-						mouseMoved = true;
+				StreamSubscription defenseSliderStream = canvas.onMouseMove.listen((e) {
+					num moveX = e.offset.x;
+					num difference = moveX - dx;
 
-						num moveX = e.offset.x;
-						num moveY = e.offset.y;
+					atlas.defenseSlider.handleX += difference;
+					atlas.defenseSlider.setValue();
 
-						atlas.tempTarget = new Point(moveX, moveY);
-					});
+					dx = moveX;
+				});
 
-					window.onMouseUp.listen((e) {
-						mouseMoveStream.cancel();
-
-						if (atlas.tempTarget != null && atlas.currentCountries.contains(atlas.fromCountry)) {
-							atlas.tempTarget = null;
-
-							String target = atlas.getCountry(e.offset.x, e.offset.y);
-
-							if (target != null && Atlas.borders[atlas.fromCountry].contains(target) && atlas.availableCountries.contains(target)) {
-								atlas.target = new Point(e.offset.x + atlas.offset.x, e.offset.y + atlas.offset.y);
-								atlas.targetCountry = target;
-							}
-						}
-					});
-				}
+				window.onMouseUp.listen((e) {
+					defenseSliderStream.cancel();
+				});
 			}
 		}
 	});
+
+	canvas.onContextMenu.listen((e) => e.preventDefault());
 
 	window.onMouseUp.listen((e) {
 		mouse.down = false;
@@ -319,9 +405,16 @@ init() {
 
 	textureRects["arrowsCenter"] = new Rectangle(497, 0, 56, 52);
 	textureRects["arrows"] = new Rectangle(497, 52, 148, 138);
+	textureRects["smallArrows"] = new Rectangle(452, 448, 100, 93);
 
 	textureRects["slider"] = new Rectangle(226, 574, 175, 15);
 	textureRects["sliderHandle"] = new Rectangle(401, 574, 18, 36);
+
+	textureRects["nextButton"] = new Rectangle(553, 448, 85, 84);
+	textureLocations["nextButton"] =  new Rectangle(WIDTH - textureRects["nextButton"].width - 20, HEIGHT - 60 - (textureRects["nextButton"].height / 2), textureRects["nextButton"].width, textureRects["nextButton"].height);
+
+	textureRects["recruitButton"] = new Rectangle(452, 542, 115, 72);
+	textureLocations["recruitButton"] =  new Rectangle(WIDTH - textureRects["recruitButton"].width - textureRects["nextButton"].width - 40, HEIGHT - 60 - (textureRects["recruitButton"].height / 2), textureRects["recruitButton"].width, textureRects["recruitButton"].height);
 
 	applicant.randomize();
 
