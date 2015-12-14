@@ -159,6 +159,10 @@ class Atlas {
 		});
 	}
 
+	bool texturesLoaded() {
+		return (visibleMap.loaded && coloredMap.loaded && outlineMap.loaded && countryOverlays.loaded && enemyOverlays.loaded);
+	}
+
 	String getCountry(num x, num y) {
 		List<int> data = colorsContext.getImageData(x, y, 1, 1).data;
 

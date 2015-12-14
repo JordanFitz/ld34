@@ -20,10 +20,10 @@ num backgroundOpacity = 0.0;
 bool backgroundDirection = false;
 
 enum GameState {
-	MENU, MAP, INTERVIEW, NEWS, OVER
+	MENU, MAP, INTERVIEW, NEWS, OVER, LOADING
 }
 
-GameState gameState = GameState.MENU;
+GameState gameState = GameState.LOADING;
 
 Map keys = new Map<num, bool>();
 Map keycodes = {
@@ -52,6 +52,18 @@ FadeToBlack fadeToBlack = new FadeToBlack();
 FadeToBlack interviewTransition = new FadeToBlack();
 
 update(num d) {
+	if(gameState == GameState.LOADING) {
+		bool loaded = true;
+
+		textures.forEach((id, texture) {
+			if(!texture.loaded) loaded = false;
+		});
+
+		loaded = loaded && atlas.texturesLoaded();
+
+		if(loaded) gameState = GameState.MENU;
+	}
+
 	if (gameState == GameState.MAP && !fadeToBlack.fading && army != null && (army.lost || army.won)) gameState = GameState.OVER;
 
 	num delta = d - lastDelta;
@@ -269,6 +281,9 @@ draw() {
 			utils.drawText(context, "You lost", WIDTH / 2, HEIGHT / 2, "Propaganda", 75, "#000", true, horiz: true);
 			utils.drawText(context, "(click anywhere to restart)", WIDTH / 2, HEIGHT / 2 + 40, "Propaganda", 17, "#000", true, horiz: true);
 		}
+	} else if (gameState == GameState.LOADING) {
+		utils.drawText(context, "Loading textures", WIDTH / 2, HEIGHT / 2, "Propaganda", 75, "#000", true, horiz: true);
+		utils.drawText(context, "Please wait...", WIDTH / 2, HEIGHT / 2 + 40, "Propaganda", 17, "#000", true, horiz: true);
 	}
 }
 
