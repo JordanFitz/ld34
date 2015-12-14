@@ -23,7 +23,7 @@ class Army {
 
 		gold = 80;
 		food = 100;
-		strength = atlas.availableCountries.length * (1 + random.nextInt(2));
+		strength = 6 + atlas.availableCountries.length * (1 + random.nextInt(2));
 
 		List<String> otherCountries = new List<String>();
 
@@ -31,15 +31,18 @@ class Army {
 			if(country != countryCode && !Atlas.borders[country].contains(countryCode)) otherCountries.add(countryCode);
 		});
 
-		enemies[otherCountries[random.nextInt(otherCountries.length)]] = country;
-		enemies[otherCountries[random.nextInt(otherCountries.length)]] = country;
-		enemies[otherCountries[random.nextInt(otherCountries.length)]] = country;
+		while(enemies.length < 3) {
+			num randomIndex = random.nextInt(otherCountries.length);
+			String randomCountry = otherCountries[randomIndex];
+
+			enemies[randomCountry] = country;
+
+			otherCountries.remove(randomIndex);
+		}
 
 		enemies.forEach((attacker, attacking) {
 			enemyOverlays.add(Atlas.overlays[attacker]);
 		});
-
-		defense[country] = strength;
 	}
 
 	hireApplicant(Applicant applicant) {

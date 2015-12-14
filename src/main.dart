@@ -111,16 +111,14 @@ draw() {
 		String countryCode = atlas.getCountry(mouse.x, mouse.y);
 		String country = Atlas.countryNames[countryCode];
 
-		if (country != null && (atlas.slider == null || atlas.slider.rect == null || !utils.withinBox(mouse.x, mouse.y, atlas.slider.rect))) {
+		if (country != null && (atlas.slider == null || atlas.slider.rect == null || !utils.withinBox(mouse.x, mouse.y, atlas.slider.rect)) /*&& atlas.baseCountry == null*/) {
 			if(army != null && army.defense[countryCode] != null) {
-//				utils.drawText(context, "[${army.defense[countryCode]}] $country", mouse.x + 1, mouse.y - 39, "Propaganda", 20, "rgba(255,255,255,0.6)", true);
-//				utils.drawText(context, "[${army.defense[countryCode]}] $country", mouse.x, mouse.y - 40, "Propaganda", 20, "rgba(0,0,0,0.9)", true);
 				utils.drawTextWithShadow(context, "[${army.defense[countryCode]}] $country", mouse.x, mouse.y - 40, "Propaganda", 25, true);
 			} else {
-//				utils.drawText(context, "$country", mouse.x + 1, mouse.y - 39, "Propaganda", 20, "rgba(255,255,255,0.6)", true);
-//				utils.drawText(context, country, mouse.x, mouse.y - 40, "Propaganda", 20, "rgba(0,0,0,0.9)", true);
 				utils.drawTextWithShadow(context, country, mouse.x, mouse.y - 40, "Propaganda", 25, true);
 			}
+		} else if (country != null && (atlas.slider == null || atlas.slider.rect == null || !utils.withinBox(mouse.x, mouse.y, atlas.slider.rect))) {
+//			utils.drawTextWithShadow(context, "[${Atlas.strength[countryCode]}] $country", mouse.x, mouse.y - 40, "Propaganda", 25, true);
 		}
 	} else if (gameState == GameState.INTERVIEW) {
 		utils.drawRect(context, 0, 0, WIDTH, HEIGHT, "#4D4D4D");
@@ -230,7 +228,7 @@ init() {
 						num targetX = atlas.target.x - atlas.offset.x;
 						num targetY = atlas.target.y - atlas.offset.y;
 
-						if (!utils.within(downX, downY, targetX - 7, targetY - 7, targetX + 14, targetY + 14)) return;
+						if (!utils.within(downX, downY, targetX - 7, targetY - 7, 14, 14)) return;
 
 						atlas.target = null;
 					}

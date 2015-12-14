@@ -297,7 +297,9 @@ class Atlas {
 		}
 
 		if(army != null) {
-			utils.drawTextWithShadow(context, "Total strength: ${army.strength}", 20, 20, "Propaganda", 30, false);
+			utils.drawTextWithShadow(context, "Strength: ${army.strength}", 20, 20, "Propaganda", 30, false);
+			utils.drawTextWithShadow(context, "Food: ${army.food}", 20, 50, "Propaganda", 30, false);
+			utils.drawTextWithShadow(context, "Gold: ${army.gold}", 20, 80, "Propaganda", 30, false);
 		}
 	}
 }
