@@ -64,6 +64,6 @@ class Slider {
 		utils.drawTextWithShadow(context, "${value.floor()}", handleX, y - 32, "Propaganda", 20, true);
 
 		utils.drawTextWithShadow(context, "0", x - 28, y + 1, "Propaganda", 20, false);
-		utils.drawTextWithShadow(context, "$high", x + width + 16, y + 1, "Propaganda", 20, false, color: max < high ? "#993638" : "#fff");
+		utils.drawTextWithShadow(context, "${high.floor()}", x + width + 16, y + 1, "Propaganda", 20, false, color: max < high ? "#993638" : "#fff");
 	}
 }

@@ -294,12 +294,16 @@ draw() {
 					 "support one of your own. You can also recruit new units\n" +
 					 "who will add to your total strength. Each unit costs\n" +
 					 "gold to hire and will require food each turn. If you\n" +
-					 "run out of food, your empire will die!\n\n" +
+					 "run out of food, your empire will die! You can interview\n" +
+					 "up to five units per turn.\n\n" +
 					 "Your chances of winning a battle are based on your enemy's\n" +
 					 "strength and a little bit of luck. Your enemies are\n" +
 					 "highlighted in blue and will sometimes attack one of your\n" +
 					 "countries if it's bordering them. Neutral countries bordering\n" +
-					 "you will turn against you eventually.";
+					 "you will turn against you eventually.\n\n" +
+					 "To attack a country, click on one of your countries and drag\n" +
+					 "to the country you want to attack. The same goes for supporting,\n" +
+					 "except you drag from one of your countries to another.";
 
 		List<String> lines = how.split('\n');
 

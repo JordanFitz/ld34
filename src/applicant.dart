@@ -54,6 +54,9 @@ class Applicant {
 		Rectangle statsDestination = new Rectangle(125, 0, textureRects["statsBoard"].width, textureRects["statsBoard"].height);
 		context.drawImageToRect(spritesheet.image, statsDestination, sourceRect: textureRects["statsBoard"]);
 
+		utils.drawText(context, "${visualFeatures.firstName}", 160, 135, "Propaganda", 25, "#bcbcbc", false);
+		utils.drawText(context, "${visualFeatures.lastName}", 160, 155, "Propaganda", 25, "#bcbcbc", false);
+
 		utils.drawText(context, "$strength", 200, 225, "Propaganda", 25, "#bcbcbc", false);
 		utils.drawText(context, "$requiredFood", 282, 225, "Propaganda", 25, "#bcbcbc", false);
 
