@@ -79,6 +79,11 @@ class Applicant {
 		context.drawImageToRect(spritesheet.image, mouthAreaDestination, sourceRect: visualFeatures.mustacheRect);
 		context.drawImageToRect(spritesheet.image, mouthAreaDestination, sourceRect: visualFeatures.beardRect);
 
+		Rectangle shirtDest = new Rectangle(width / 2 - 133, height - 200 - bodyHeight + 98, 255, 366);
+
+		context.drawImageToRect(spritesheet.image, shirtDest, sourceRect: visualFeatures.shirtRect);
+		context.drawImageToRect(spritesheet.image, shirtDest, sourceRect: visualFeatures.accessoryRect);
+
 		Rectangle hatDestination = new Rectangle(width / 2 - 160, height - 200 - bodyHeight - 140, 320, 256);
 		context.drawImageToRect(spritesheet.image, hatDestination, sourceRect: visualFeatures.hatRect);
 	}
