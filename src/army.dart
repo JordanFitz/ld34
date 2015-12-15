@@ -103,7 +103,7 @@ class Army {
 				events.add("${Atlas.countryNames[atlas.targetCountry]} was captured by ${Atlas.countryNames[atlas.fromCountry]}!");
 			} else {
 				Atlas.strength[atlas.fromCountry] = (Atlas.strength[atlas.fromCountry] / 5) * 4;
-				events.add("${Atlas.countryNames[atlas.targetCountry]} failed to capture ${Atlas.countryNames[atlas.fromCountry]}.");
+				events.add("${Atlas.countryNames[atlas.fromCountry]} failed to capture ${Atlas.countryNames[atlas.targetCountry]}.");
 			}
 
 			atlas.from = null;

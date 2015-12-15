@@ -303,7 +303,8 @@ draw() {
 					 "you will turn against you eventually.\n\n" +
 					 "To attack a country, click on one of your countries and drag\n" +
 					 "to the country you want to attack. The same goes for supporting,\n" +
-					 "except you drag from one of your countries to another.";
+					 "except you drag from one of your countries to another with right\n" +
+					 "click.";
 
 		List<String> lines = how.split('\n');
 
