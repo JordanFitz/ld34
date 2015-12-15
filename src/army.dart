@@ -33,7 +33,7 @@ class Army {
 		Random random = new Random();
 
 		gold = 50;
-		food = 35;
+		food = 200;
 		strength = 0;
 
 		Atlas.strength[country] = strength;
@@ -97,7 +97,7 @@ class Army {
 				if (enemies.containsKey(atlas.targetCountry)) enemies.remove(atlas.targetCountry);
 
 				strength += (enemyStrength / 2).floor();
-				food += ((enemyStrength / 4) * (1 + new Random().nextInt(5))).floor();
+				food += ((enemyStrength / 2) * (1 + new Random().nextInt(5))).floor();
 				gold += ((enemyStrength / 4) * (1 + new Random().nextInt(5))).floor();
 
 				events.add("${Atlas.countryNames[atlas.targetCountry]} was captured by ${Atlas.countryNames[atlas.fromCountry]}!");

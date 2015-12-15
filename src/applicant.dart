@@ -4,6 +4,7 @@ import "dart:html";
 import "featureset.dart";
 import "utils.dart" as utils;
 import "texture.dart";
+import "army.dart";
 
 class Applicant {
 	// 1 = short, 2 = medium, 3 = tall
@@ -13,7 +14,11 @@ class Applicant {
 	num requiredGold = 0;
 	num requiredFood = 0;
 
+	Army army;
+
 	FeatureSet visualFeatures = new FeatureSet();
+
+	Applicant(this.army);
 
 	randomize() {
 		Random random = new Random();
@@ -51,7 +56,11 @@ class Applicant {
 
 		utils.drawText(context, "$strength", 200, 225, "Propaganda", 25, "#bcbcbc", false);
 		utils.drawText(context, "$requiredFood", 282, 225, "Propaganda", 25, "#bcbcbc", false);
-		utils.drawText(context, "$requiredGold", 200, 295, "Propaganda", 25, "#bcbcbc", false);
+
+		if (army != null && army.gold >= requiredGold)
+			utils.drawText(context, "$requiredGold", 200, 295, "Propaganda", 25, "#bcbcbc", false);
+		else
+			utils.drawText(context, "$requiredGold", 200, 295, "Propaganda", 25, "#aa3b3d", false);
 
 		Rectangle bodySource = new Rectangle(this.height * 226, 230, 226, bodyHeight);
 		Rectangle bodyDestination = new Rectangle(width / 2 - 113, height - 200 - bodyHeight, 226, bodyHeight);

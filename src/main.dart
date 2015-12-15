@@ -20,10 +20,10 @@ num backgroundOpacity = 0.0;
 bool backgroundDirection = false;
 
 enum GameState {
-	MENU, MAP, INTERVIEW, NEWS, OVER, LOADING
+	MENU, MAP, INTERVIEW, NEWS, OVER, LOADING, HOW
 }
 
-GameState gameState = GameState.LOADING;
+GameState gameState = GameState.MENU;
 
 Map keys = new Map<num, bool>();
 Map keycodes = {
@@ -41,9 +41,11 @@ Map textureLocations = new Map<String, Rectangle>();
 
 num lastDelta = 0;
 
-Rectangle playButton = new Rectangle(WIDTH / 2 - (150), 400, 300, 50);
+Rectangle playButton = new Rectangle(WIDTH / 2, 310, 500, 45);
+Rectangle howtoButton = new Rectangle(WIDTH / 2, 365, 500, 45);
+Rectangle backButton = new Rectangle(20, HEIGHT - 65, 300, 45);
 
-Applicant applicant = new Applicant();
+Applicant applicant = new Applicant(army);
 
 Atlas atlas = new Atlas(WIDTH, HEIGHT);
 Army army;
@@ -52,6 +54,8 @@ FadeToBlack fadeToBlack = new FadeToBlack();
 FadeToBlack interviewTransition = new FadeToBlack();
 
 update(num d) {
+	num delta = d - lastDelta;
+
 	if(gameState == GameState.LOADING) {
 		bool loaded = true;
 
@@ -66,24 +70,12 @@ update(num d) {
 
 	if (gameState == GameState.MAP && !fadeToBlack.fading && army != null && (army.lost || army.won)) gameState = GameState.OVER;
 
-	num delta = d - lastDelta;
-
-	if (backgroundDirection) {
-		if (backgroundOpacity < 0.3) {
-			backgroundOpacity += 0.06 / delta;
-		} else {
-			backgroundDirection = false;
-		}
-	} else {
-		if (backgroundOpacity > 0) {
-			backgroundOpacity -= 0.06 / delta;
-		} else {
-			backgroundDirection = true;
-		}
-	}
-
 	if (gameState == GameState.MENU && utils.withinBox(mouse.x, mouse.y, playButton) && mouse.down) {
 		gameState = GameState.MAP;
+	}
+
+	if (gameState == GameState.MENU && utils.withinBox(mouse.x, mouse.y, howtoButton) && mouse.down) {
+		gameState = GameState.HOW;
 	}
 
 	if(gameState == GameState.MAP && !fadeToBlack.fading && !interviewTransition.fading) {
@@ -116,6 +108,11 @@ update(num d) {
 		}
 	}
 
+	if(army != null && army.food <= 0) {
+		army.food = 0;
+		army.lost = true;
+	}
+
 	fadeToBlack.update(delta);
 	interviewTransition.update(delta);
 
@@ -126,19 +123,24 @@ draw() {
 	context.clearRect(0, 0, WIDTH, HEIGHT);
 
 	if (gameState == GameState.MENU) {
-		context.fillStyle = "rgba(0, 0, 0, $backgroundOpacity)";
-		context.fillRect(0, 0, WIDTH, HEIGHT);
-
-		utils.drawText(context, "Twobuttons", WIDTH / 2, 250, "Propaganda", 60, "#000", true);
-		utils.drawText(context, "Controls", WIDTH / 2, 300, "Propaganda", 60, "#000", true);
+		context.drawImage(textures["menuBackground"].image, 0, 0);
+		context.drawImageToRect(textures["menu"].image, new Rectangle(HEIGHT / 2 - textures["menu"].image.height / 2, 150, textures["menu"].image.width, textures["menu"].image.height));
 
 		if (utils.withinBox(mouse.x, mouse.y, playButton)) {
-			utils.drawBox(context, playButton, "rgba(0,0 0,0.7)");
+			utils.drawBox(context, playButton, "rgba(255,255,255,0.7)");
 		} else {
-			utils.drawBox(context, playButton, "rgba(0,0,0,0.6)");
+			utils.drawBox(context, playButton, "rgba(255,255,255,0.6)");
 		}
 
-		utils.drawText(context, "PLAY", WIDTH / 2, 418, "Propaganda", 25, "#fff", true);
+		if (utils.withinBox(mouse.x, mouse.y, howtoButton)) {
+			utils.drawBox(context, howtoButton, "rgba(255,255,255,0.7)");
+		} else {
+			utils.drawBox(context, howtoButton, "rgba(255,255,255,0.6)");
+		}
+
+		utils.drawText(context, "PLAY", playButton.left + playButton.width / 2, playButton.top + 15, "Propaganda", 25, "#000", true);
+		utils.drawText(context, "How to play", howtoButton.left + howtoButton.width / 2, howtoButton.top + 15, "Propaganda", 25, "#000", true);
+
 	} else if (gameState == GameState.MAP) {
 		atlas.render(context, army, textures["spritesheet"], textureRects);
 
@@ -149,7 +151,7 @@ draw() {
 				(atlas.slider == null || atlas.slider.rect == null || !utils.withinBox(mouse.x, mouse.y, atlas.slider.rect)) &&
 				(atlas.defenseSlider == null || atlas.defenseSlider.rect == null || !utils.withinBox(mouse.x, mouse.y, atlas.defenseSlider.rect))) {
 			if(army != null && atlas.currentCountries.contains(countryCode)) {
-				utils.drawTextWithShadow(context, "[${Atlas.strength[countryCode]}] $country", mouse.x, mouse.y - 40, "Propaganda", 25, true);
+				utils.drawTextWithShadow(context, "[${Atlas.strength[countryCode].floor()}] $country", mouse.x, mouse.y - 40, "Propaganda", 25, true);
 			} else {
 				utils.drawTextWithShadow(context, country, mouse.x, mouse.y - 40, "Propaganda", 25, true);
 			}
@@ -210,7 +212,7 @@ draw() {
 			}
 
 			interviewTransition.fade();
-			applicant = new Applicant();
+			applicant = new Applicant(army);
 			applicant.randomize();
 		}
 
@@ -225,13 +227,13 @@ draw() {
 		utils.drawText(context, "Food: ${army.food}", 50, 5, "Propaganda", 25, "#e5e5e5", false);
 		utils.drawText(context, "Gold: ${army.gold}", 65 + utils.measure(context, "Food: ${army.food}", "Propaganda", 25), 5, "Propaganda", 25, "#e5e5e5", false);
 
-		context.globalAlpha = 0.93;
+//		context.globalAlpha = 0.9;
 
 		if (utils.withinBox(mouse.x, mouse.y, textureLocations["acceptButton"])) {
-			context.globalAlpha = 0.9;
+//			context.globalAlpha = 0.95;
 
-			if (mouse.down && !interviewTransition.fading) {
-				context.globalAlpha = 1;
+			if (mouse.down && !interviewTransition.fading && army.gold >= applicant.requiredGold) {
+//				context.globalAlpha = 1;
 				army.men.add(applicant);
 				army.recruitStrength += applicant.strength;
 				army.weekRecruits--;
@@ -242,12 +244,12 @@ draw() {
 
 		context.drawImageToRect(textures["spritesheet"].image, textureLocations["acceptButton"], sourceRect: textureRects["acceptButton"]);
 
-		context.globalAlpha = 0.93;
+//		context.globalAlpha = 0.9;
 
 		if (utils.withinBox(mouse.x, mouse.y, textureLocations["denyButton"])) {
-			context.globalAlpha = 0.9;
+//			context.globalAlpha = 0.95;
 			if (mouse.down && !interviewTransition.fading) {
-				context.globalAlpha = 1;
+//				context.globalAlpha = 1;
 				army.weekRecruits--;
 				interviewTransition.fade();
 			}
@@ -278,12 +280,43 @@ draw() {
 			utils.drawText(context, "You won!", WIDTH / 2, HEIGHT / 2, "Propaganda", 75, "#000", true, horiz: true);
 			utils.drawText(context, "(click anywhere to restart)", WIDTH / 2, HEIGHT / 2 + 40, "Propaganda", 17, "#000", true, horiz: true);
 		} else if (army.lost) {
-			utils.drawText(context, "You lost", WIDTH / 2, HEIGHT / 2, "Propaganda", 75, "#000", true, horiz: true);
+			utils.drawText(context, army.food > 0 ? "You lost" : "You ran out of food", WIDTH / 2, HEIGHT / 2, "Propaganda", 75, "#000", true, horiz: true);
 			utils.drawText(context, "(click anywhere to restart)", WIDTH / 2, HEIGHT / 2 + 40, "Propaganda", 17, "#000", true, horiz: true);
 		}
 	} else if (gameState == GameState.LOADING) {
 		utils.drawText(context, "Loading textures", WIDTH / 2, HEIGHT / 2, "Propaganda", 75, "#000", true, horiz: true);
 		utils.drawText(context, "Please wait...", WIDTH / 2, HEIGHT / 2 + 40, "Propaganda", 17, "#000", true, horiz: true);
+	} else if (gameState == GameState.HOW) {
+		String how = "You are Twobuttons, a manic looking to control the world.\n" +
+					 "Or at least Europe.\n\n" +
+					 "You'll first choose a country to start in. Each turn,\n" +
+				     "you'll have the option to attack another country and/or\n" +
+					 "support one of your own. You can also recruit new units\n" +
+					 "who will add to your total strength. Each unit costs\n" +
+					 "gold to hire and will require food each turn. If you\n" +
+					 "run out of food, your empire will die!\n\n" +
+					 "Your chances of winning a battle are based on your enemy's\n" +
+					 "strength and a little bit of luck. Your enemies are\n" +
+					 "highlighted in blue and will sometimes attack one of your\n" +
+					 "countries if it's bordering them. Neutral countries bordering\n" +
+					 "you will turn against you eventually.";
+
+		List<String> lines = how.split('\n');
+
+		num i = 0;
+		lines.forEach((line) {
+			utils.drawText(context, "$line", 20, 20 + (i * 30), "Propaganda", 30, "#000", false);
+			i++;
+		});
+
+		if (utils.withinBox(mouse.x, mouse.y, backButton)) {
+			utils.drawBox(context, backButton, "rgba(0,0,0,0.7)");
+			if (mouse.down) gameState = GameState.MENU;
+		} else {
+			utils.drawBox(context, backButton, "rgba(0,0,0,0.6)");
+		}
+
+		utils.drawText(context, "Back to menu", backButton.left + backButton.width / 2, backButton.top + 15, "Propaganda", 25, "#fff", true);
 	}
 }
 
@@ -478,12 +511,14 @@ init() {
 	textures["spritesheet"] = new Texture("images/spritesheet.png");
 	textures["applicantOverlay"] = new Texture("images/applicant_overlay.png");
 	textures["applicantBackground"] = new Texture("images/applicant_background.png");
+	textures["menu"] = new Texture("images/menu.png");
+	textures["menuBackground"] = new Texture("images/menu_background.png");
 
-	textureRects["acceptButton"] = new Rectangle(0, 0, 249, 230);
-	textureLocations["acceptButton"] = new Rectangle(450, HEIGHT - 140, 124.5, 115);
+	textureRects["acceptButton"] = new Rectangle(0, 0, 247, 221);
+	textureLocations["acceptButton"] = new Rectangle(452, HEIGHT - 158, 168, 148);
 
-	textureRects["denyButton"] = new Rectangle(249, 0, 249, 230);
-	textureLocations["denyButton"] = new Rectangle(WIDTH - 450 - 124.5, HEIGHT - 140, 124.5, 115);
+	textureRects["denyButton"] = new Rectangle(247, 0, 249, 223);
+	textureLocations["denyButton"] = new Rectangle(646 + 10, HEIGHT - 158, 168, 148);
 
 	textureRects["arrowsCenter"] = new Rectangle(497, 0, 56, 52);
 	textureRects["arrows"] = new Rectangle(497, 52, 148, 138);

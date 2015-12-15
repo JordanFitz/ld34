@@ -112,6 +112,7 @@ class Atlas {
 	Texture outlineMap = new Texture("images/map_outline.png");
 	Texture countryOverlays = new Texture("images/overlays.png");
 	Texture enemyOverlays = new Texture("images/overlays_blue.png");
+	Texture water = new Texture("images/water.png");
 
 	CanvasElement colorsCanvas = new CanvasElement();
 	CanvasRenderingContext2D colorsContext;
@@ -160,7 +161,7 @@ class Atlas {
 	}
 
 	bool texturesLoaded() {
-		return (visibleMap.loaded && coloredMap.loaded && outlineMap.loaded && countryOverlays.loaded && enemyOverlays.loaded);
+		return (visibleMap.loaded && coloredMap.loaded && outlineMap.loaded && countryOverlays.loaded && enemyOverlays.loaded && water.loaded);
 	}
 
 	String getCountry(num x, num y) {
@@ -227,6 +228,7 @@ class Atlas {
 
 		colorsContext.drawImageToRect(coloredMap.image, destination, sourceRect: source);
 
+		context.drawImageToRect(water.image, destination, sourceRect: source);
 		context.drawImageToRect(visibleMap.image, destination, sourceRect: source);
 
 		if (army != null) {
